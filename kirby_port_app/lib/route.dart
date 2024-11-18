@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kirby_port_app/widgets/page/my_room_page.dart';
 import 'package:kirby_port_app/widgets/page/room_list_page.dart';
+import 'package:kirby_port_app/widgets/screen/chat_screen.dart';
 import 'package:kirby_port_app/widgets/screen/create_room_screen.dart';
 import 'package:kirby_port_app/widgets/screen/home_screen.dart';
 import 'package:kirby_port_app/widgets/screen/topic_filter_screen.dart';
@@ -40,12 +41,12 @@ final GoRouter _router = GoRouter(
             return const CreateRoomScreen();
           },
         ),
-        // GoRoute(
-        //   path: "list",
-        //   builder: (BuildContext context, GoRouterState state) {
-        //     return const ChatScreen();
-        //   },
-        // ),
+        GoRoute(
+          path: "list",
+          builder: (BuildContext context, GoRouterState state) {
+            return const ChatScreen();
+          },
+        ),
       ],
     ),
   ],

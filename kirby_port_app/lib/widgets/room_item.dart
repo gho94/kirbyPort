@@ -37,15 +37,20 @@ class RoomItem extends StatelessWidget {
               child: Row(
                 children: [
                   if (room.reserveYn == "N")
-                    ElevatedButton(onPressed: () => _updateReserveYn(context, "Y"), child: const Text("예약"))
+                    ElevatedButton(
+                        onPressed: () => _updateReserveYn(context, "Y"),
+                        child: const Text("예약"))
                   else ...[
                     ElevatedButton(
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-                      onPressed: () => context.go("/list"),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue),
+                      onPressed: () => context.push("/list"),
                       child: const Text("참여"),
                     ),
                     const SizedBox(width: 10),
-                    ElevatedButton(onPressed: () => _updateReserveYn(context, "N"), child: const Text("취소")),
+                    ElevatedButton(
+                        onPressed: () => _updateReserveYn(context, "N"),
+                        child: const Text("취소")),
                   ]
                 ],
               ),
