@@ -36,11 +36,9 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
   void _initializeSocket() {
     socket = IO.io(
-      'http://10.10.6.123:3000', // 서버 IP 주소
-      IO.OptionBuilder()
-          .setTransports(['websocket'])
-          .disableAutoConnect()
-          .build(),
+      'http://10.0.0.2:3000', // 서버 IP 주소
+      //'http://10.10.6.123:3000', // 서버 IP 주소
+      IO.OptionBuilder().setTransports(['websocket']).disableAutoConnect().build(),
     );
 
     socket.connect();
@@ -118,8 +116,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
   Widget _buildHeart() {
     final random = Random();
-    final double startX =
-        random.nextDouble() * MediaQuery.of(context).size.width;
+    final double startX = random.nextDouble() * MediaQuery.of(context).size.width;
     final double endY = MediaQuery.of(context).size.height;
 
     return Positioned(
@@ -196,8 +193,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
           Row(
             children: [
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                 decoration: BoxDecoration(
                   color: Colors.red,
                   borderRadius: BorderRadius.circular(12),
@@ -244,13 +240,9 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                         final isMine = message['isMine'] as bool;
                         final senderName = message['senderName'] ?? "Unknown";
                         return Align(
-                          alignment: isMine
-                              ? Alignment.centerRight
-                              : Alignment.centerLeft,
+                          alignment: isMine ? Alignment.centerRight : Alignment.centerLeft,
                           child: Column(
-                            crossAxisAlignment: isMine
-                                ? CrossAxisAlignment.end
-                                : CrossAxisAlignment.start,
+                            crossAxisAlignment: isMine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                             children: [
                               if (!isMine)
                                 Padding(
@@ -265,14 +257,10 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                                   ),
                                 ),
                               Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 8),
-                                margin: const EdgeInsets.symmetric(
-                                    vertical: 4, horizontal: 8),
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                                 decoration: BoxDecoration(
-                                  color: isMine
-                                      ? Colors.red.shade500
-                                      : Colors.grey.shade300,
+                                  color: isMine ? Colors.red.shade500 : Colors.grey.shade300,
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: Text(
@@ -292,8 +280,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                 ),
               ),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 child: Row(
                   children: [
                     Expanded(
@@ -352,8 +339,7 @@ class AnimatedHeart extends StatefulWidget {
   State<AnimatedHeart> createState() => _AnimatedHeartState();
 }
 
-class _AnimatedHeartState extends State<AnimatedHeart>
-    with SingleTickerProviderStateMixin {
+class _AnimatedHeartState extends State<AnimatedHeart> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _yAnimation;
   late final Animation<double> _opacityAnimation;

@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:kirby_port_app/model/room_model.dart';
 import 'package:kirby_port_app/service/room_manager.dart';
 
-class RoomController extends ChangeNotifier {
+class RoomViewModel extends ChangeNotifier {
   final RoomManager _roomManager = RoomManager();
   List<Room> _rooms = [];
   List<Room> get rooms => _rooms;
@@ -13,7 +13,7 @@ class RoomController extends ChangeNotifier {
   bool _loading = false;
   bool get loading => _loading;
 
-  RoomController() {
+  RoomViewModel() {
     _initialize();
   }
 
