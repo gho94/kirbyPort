@@ -9,6 +9,7 @@ import 'package:kirby_port_app/screen/topic_filter_screen.dart';
 
 GoRouter get router => _router;
 
+// Branch Protection Rule  테스트
 final GoRouter _router = GoRouter(
   routes: <RouteBase>[
     GoRoute(
