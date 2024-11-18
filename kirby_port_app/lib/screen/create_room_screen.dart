@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:kirby_port_app/controller/room_controller.dart';
-import 'package:kirby_port_app/controller/topic_controller.dart';
+import 'package:kirby_port_app/view_model/room_view_model.dart';
+import 'package:kirby_port_app/view_model/topic_view_model.dart';
 import 'package:kirby_port_app/model/room_model.dart';
 import 'package:kirby_port_app/model/topic_model.dart';
 import 'package:provider/provider.dart';
@@ -40,8 +40,8 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
       reserveYn: "N",
     );
 
-    final roomController = Provider.of<RoomController>(context, listen: false);
-    roomController.addRoom(room);
+    final roomViewModel = Provider.of<RoomViewModel>(context, listen: false);
+    roomViewModel.addRoom(room);
 
     Navigator.pop(context);
   }
@@ -114,7 +114,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
             Wrap(
               spacing: 10.0,
               runSpacing: 10.0,
-              children: Provider.of<TopicController>(context).topics.map((topic) {
+              children: Provider.of<TopicViewModel>(context).topics.map((topic) {
                 return SizedBox(
                   width: 46.0,
                   height: 46.0,

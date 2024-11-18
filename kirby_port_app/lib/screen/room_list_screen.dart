@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:kirby_port_app/controller/room_controller.dart';
-import 'package:kirby_port_app/controller/topic_controller.dart';
-import 'package:kirby_port_app/widgets/infinite_scroll_mixin.dart';
-import 'package:kirby_port_app/widgets/room_item.dart';
+import 'package:kirby_port_app/view_model/room_view_model.dart';
+import 'package:kirby_port_app/view_model/topic_view_model.dart';
+import 'package:kirby_port_app/component/infinite_scroll_mixin.dart';
+import 'package:kirby_port_app/component/room_item.dart';
 import 'package:provider/provider.dart';
 
-class RoomListPage extends StatefulWidget {
-  const RoomListPage({super.key});
+class RoomListScreen extends StatefulWidget {
+  const RoomListScreen({super.key});
 
   @override
-  State<RoomListPage> createState() => _RoomListPageState();
+  State<RoomListScreen> createState() => _RoomListScreenState();
 }
 
-class _RoomListPageState extends State<RoomListPage> with InfiniteScrollMixin {
+class _RoomListScreenState extends State<RoomListScreen> with InfiniteScrollMixin {
   @override
   void onScroll() {
-    final roomController = Provider.of<RoomController>(context, listen: false);
-    roomController.loadMoreRooms();
+    final roomViewModel = Provider.of<RoomViewModel>(context, listen: false);
+    roomViewModel.loadMoreRooms();
   }
 
   @override
@@ -34,10 +34,10 @@ class _RoomListPageState extends State<RoomListPage> with InfiniteScrollMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<RoomController, TopicController>(
-      builder: (context, roomController, topicController, child) {
-        final selectedTopicIds = topicController.selectedTopicIds;
-        final filterRooms = roomController.rooms.where((room) => selectedTopicIds.isEmpty || selectedTopicIds.contains(room.topicId)).toList();
+    return Consumer2<RoomViewModel, TopicViewModel>(
+      builder: (context, roomViewModel, topicViewModel, child) {
+        final selectedTopicIds = topicViewModel.selectedTopicIds;
+        final filterRooms = roomViewModel.rooms.where((room) => selectedTopicIds.isEmpty || selectedTopicIds.contains(room.topicId)).toList();
 
         return Scaffold(
           body: Padding(
@@ -47,15 +47,15 @@ class _RoomListPageState extends State<RoomListPage> with InfiniteScrollMixin {
                 Expanded(
                   child: ListView.separated(
                     controller: scrollController,
-                    itemCount: filterRooms.length + (roomController.loading ? 1 : 0),
+                    itemCount: filterRooms.length + (roomViewModel.loading ? 1 : 0),
                     separatorBuilder: (context, index) => const SizedBox(height: 10),
                     itemBuilder: (BuildContext context, int index) {
-                      if (roomController.loading && index == filterRooms.length) {
+                      if (roomViewModel.loading && index == filterRooms.length) {
                         return const Center(child: CircularProgressIndicator());
                       }
 
                       final room = filterRooms[index];
-                      final topic = topicController.topics.where((topic) => topic.id == room.topicId).firstOrNull;
+                      final topic = topicViewModel.topics.where((topic) => topic.id == room.topicId).firstOrNull;
 
                       return RoomItem(room: room, topicName: topic?.name ?? "Unknown");
                     },

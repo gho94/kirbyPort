@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kirby_port_app/model/topic_model.dart';
 import 'package:kirby_port_app/service/topic_manager.dart';
 
-class TopicController extends ChangeNotifier {
+class TopicViewModel extends ChangeNotifier {
   final TopicManager _topicManager = TopicManager();
 
   List<Topic> _topics = [];
@@ -11,7 +11,7 @@ class TopicController extends ChangeNotifier {
   List<Topic> get topics => _topics;
   List<int> get selectedTopicIds => _selectedTopicIds;
 
-  TopicController() {
+  TopicViewModel() {
     _initialize();
   }
 

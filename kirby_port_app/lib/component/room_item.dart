@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:kirby_port_app/controller/room_controller.dart';
 import 'package:kirby_port_app/model/room_model.dart';
+import 'package:kirby_port_app/view_model/room_view_model.dart';
 import 'package:provider/provider.dart';
 
 class RoomItem extends StatelessWidget {
@@ -38,19 +38,20 @@ class RoomItem extends StatelessWidget {
                 children: [
                   if (room.reserveYn == "N")
                     ElevatedButton(
-                        onPressed: () => _updateReserveYn(context, "Y"),
-                        child: const Text("예약"))
+                      onPressed: () => _updateReserveYn(context, "Y"),
+                      child: const Text("예약"),
+                    )
                   else ...[
                     ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue),
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
                       onPressed: () => context.push("/list"),
                       child: const Text("참여"),
                     ),
                     const SizedBox(width: 10),
                     ElevatedButton(
-                        onPressed: () => _updateReserveYn(context, "N"),
-                        child: const Text("취소")),
+                      onPressed: () => _updateReserveYn(context, "N"),
+                      child: const Text("취소"),
+                    ),
                   ]
                 ],
               ),
@@ -62,9 +63,9 @@ class RoomItem extends StatelessWidget {
   }
 
   void _updateReserveYn(BuildContext context, String reserveYn) {
-    final roomController = Provider.of<RoomController>(context, listen: false);
+    final roomViewModel = Provider.of<RoomViewModel>(context, listen: false);
 
-    roomController.updateReserveYn(
+    roomViewModel.updateReserveYn(
       roomId: room.id!,
       reserveYn: reserveYn,
       updatedAt: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
