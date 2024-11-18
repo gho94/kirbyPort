@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "62869792779",
+    "project_id": "kirby-port",
+    "storage_bucket": "kirby-port.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:62869792779:android:79581498938edc9deaff0e",
+        "android_client_info": {
+          "package_name": "com.example.kirby_port_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAw5MKUIbnq4UswGuoVHeWO0GXBbZCGln0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,175 +1,273 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:go_router/go_router.dart';
 
-class JoinScreen extends StatelessWidget {
+class JoinScreen extends StatefulWidget {
   const JoinScreen({super.key});
+
+//TODO: 이 프라이빗 문제를 해결하면 어떻게해야 하는지
+  @override
+  _JoinScreenState createState() => _JoinScreenState();
+}
+
+class _JoinScreenState extends State<JoinScreen> {
+  int _currentStep = 0;
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _nicknameController = TextEditingController();
+  bool _isLoading = false;
+
+  //코드가 길어져서 각 스텝의 데코레이션 설정은 따로 메서드로 정의
+  InputDecoration buildInputDecoration(String labelText, Color labelColor) {
+    return InputDecoration(
+      labelText: labelText,
+      floatingLabelStyle: TextStyle(
+        fontSize: 14,
+        color: labelColor,
+        height: 3.0,
+      ),
+      filled: true,
+      fillColor: Colors.white,
+      border: const OutlineInputBorder(),
+      focusedBorder: const OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Colors.red,
+          width: 1.5,
+        ),
+      ),
+    );
+  }
+
+  List<Step> _steps() => [
+        //각 스텝의 단계를 리스트로 생성
+        Step(
+          //1. 이메일 입력
+          title: const Text(
+            //텍스트 표시 및 스타일 설정
+            '이메일 입력',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          content: TextField(
+            //텍스트필드 컨트롤러 및 데코레이션, 키보드 입력 설정
+            controller: _emailController,
+            decoration: buildInputDecoration('이메일', Colors.red),
+            keyboardType: TextInputType.emailAddress, //키보드 입력타입 이메일
+          ),
+          isActive: _currentStep >= 0,
+        ),
+        Step(
+          //2. 비밀번호 입력
+          title: const Text(
+            '비밀번호 입력',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          content: TextField(
+            controller: _passwordController,
+            decoration: buildInputDecoration('비밀번호', Colors.red),
+            obscureText: true, //입력문자 가리기 활성화
+          ),
+          isActive: _currentStep >= 1,
+        ),
+        Step(
+          //3. 닉네임
+          title: const Text(
+            '닉네임 입력',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          content: TextField(
+            controller: _nicknameController,
+            decoration: buildInputDecoration('닉네임', Colors.red),
+          ),
+          isActive: _currentStep >= 2,
+        ),
+      ];
+
+  Future<void> registerUser() async {
+    if (_emailController.text.isEmpty || !_emailController.text.contains('@')) {
+      // Invalid email
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text(
+          '유효한 이메일을 입력하세요.',
+          style: TextStyle(color: Colors.red),
+        )),
+      );
+      return;
+    } //상태확인 후 오류메세지 출력(이메일)
+
+    if (_passwordController.text.length < 6) {
+      // Password too short
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('비밀번호는 최소 6자 이상이어야 합니다.')),
+      );
+      return;
+    } //상태확인 후 오류메세지 출력(비번)
+
+    setState(() {
+      _isLoading = true; // Show loading
+    });
+
+    try {
+      // Firebase Auth를 사용하여 사용자 등록
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+
+      // Firestore에 사용자 정보 저장
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .set({
+        'nickname': _nicknameController.text,
+        'email': _emailController.text,
+        // 'profileimage':
+        //     _defaultProfileImageUrl, // Firebase Storage의 기본 프로필 이미지 URL 저장
+      });
+
+      // 스낵바 표시
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('회원가입이 완료되었습니다.')),
+      );
+
+      // 1초 후 로그인 페이지로 이동
+      await Future.delayed(const Duration(seconds: 1));
+
+      // 회원가입 후 로그인 페이지로 이동
+      GoRouter.of(context).push('/LoginScreen');
+    } on FirebaseAuthException catch (e) {
+      // Error handling
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? '회원가입에 실패했습니다.')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false; // Hide loading
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        backgroundColor: Colors.black,
-        appBar: AppBar(
-          title: const Align(
-            //타이틀 위치지정
-            alignment: Alignment.centerLeft,
-            child: Text(
-              'Kirby Port',
-              style: TextStyle(color: Colors.white),
-            ),
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        title: const Align(
+          //타이틀 위치지정
+          alignment: Alignment.centerLeft,
+          child: Text(
+            'Kirby Port',
+            style: TextStyle(color: Colors.red),
           ),
-          backgroundColor: Colors.transparent, //배경색없음
         ),
-        body: LayoutBuilder(
-          //부모 위젯의 크기를 기반으로 동적 크기 설정
-          builder: (context, constrains) {
-            //context : 부모로부터 현재 자식위젯의 위치를 확인,
-            //constrains : 부모위젯이 자식에게 부여하는 크기 제한 정보
-            double screenWidth =
-                constrains.maxWidth; //screenWidth크기정의 = 부모위젯의 최대너비
-            double screenHeight =
-                constrains.maxHeight; //screenHeight크기정의 = 부모위젯의 최대높이
-            double boxHeight = screenHeight * 0.8; //높이지정
-            double boxWidth = screenWidth * 0.85; //너비지정
+        backgroundColor: Colors.transparent, //배경색없음
+      ),
+      //회원가입(비동기 작업)이 진행 중? true(로딩화면) : flase(Stepper)
+      body: _isLoading
+          //true : 로딩 중일 경우 시각적인 로딩 화면을 보여줌(CircularProgressIndicator)
+          ? const Center(
+              //중앙에 보여주기
+              child: CircularProgressIndicator()) // Loading indicator(로딩스피너)
+          //false : Stepper(단계별 UI).
+          : Theme(
+              //stepper의 테마 지정
+              data: ThemeData(
+                  //색상지정
+                  colorScheme:
+                      const ColorScheme.light(primary: Colors.red)), //주요 색상을 지정
+              child: Center(
+                //stepper 양식 지정
+                child: Stepper(
+                  stepIconHeight: 40, //스텝아이콘 높이40
+                  stepIconWidth: 40, //스텝아이콘 너비40
+                  stepIconBuilder: (stepIndex, stepState) {
+                    //step인덱스순서, step상태(사용되지않음)
+                    return Container(
+                        //아이콘 크기와 정렬을 설정
+                        alignment: Alignment.center, //가운데정렬
+                        width: 40, //너비
+                        height: 40, //높이
+                        child: Text(
+                            (stepIndex + 1).toString(), //현재 step의 번호를 텍스트로 표시
+                            style: TextStyle(
+                                //텍스트 색상을 조건에 따라 변경
+                                color:
+                                    _currentStep >= stepIndex //현재step까지 완료한 경우
+                                        ? Colors.white //완료: 흰색표시
+                                        : const Color.fromARGB(
+                                            255, 193, 193, 193)))); //미완료: 회색표시
+                  },
+                  currentStep: _currentStep, //현재 진행중인 Step의 인덱스(0부터 시작)
+                  onStepContinue: () {
+                    //다음 버튼을 눌렀을 때 실행되는 함수
+                    if (_currentStep < _steps().length - 1) {
+                      setState(() {
+                        //호출하여 UI 업데이트
+                        _currentStep++; //인덱스 증가
+                      });
+                    } else {
+                      registerUser(); // 마지막 단계에서 회원가입 처리
+                      //-> registerUser호출, firebase에 회원가입 요청
+                    }
+                  },
+                  onStepCancel: () {
+                    //취소 버튼을 눌렀을때 실행되는 함수
+                    if (_currentStep > 0) {
+                      setState(() {
+                        //호출하여 UI 업데이트
+                        _currentStep--; //인덱스 감소
+                      });
+                    }
+                  },
+                  steps: _steps(), //함수로 생성된 step리스트를 사용
 
-            return Align(
-              alignment: Alignment.center,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: Colors.white, //0xffFFF001),//FFFF77),//컨테이너색상
-                ),
-                width: boxWidth, //박스폭
-                height: boxHeight, //박스높이
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const SizedBox(
-                      height: 50,
-                      child: Text(
-                        "가입하기",
-                        style: TextStyle(color: Colors.black, fontSize: 26),
-                      ),
-                    ), //가입하기
-                    const SizedBox(height: 15), //간격
-                    SizedBox(
-                      width: 200,
-                      height: 40,
-                      child: TextFormField(
-                        //텍스트 입력 위젯, textField기반, 유효성 검사를 할 때 유용
-                        decoration: const InputDecoration(
-                          //텍스트입력필드의 디자인 추가
-                          labelText: 'Nickname', //내부에 표시되는 레이블 텍스트
-                          border:
-                              OutlineInputBorder(), //기본 테두리 설정.. TextFormField는
-                          // 활성/포커스 상태 두 가지가 있어서 각각 설정해줘야 함
-                          enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Colors.black,
-                            width: 2.0,
-                          )), //활성 상태 보더 속성),
-                          focusedBorder: OutlineInputBorder(
-                            //창을 클릭했을때 보더 속성
-                            borderSide: BorderSide(
-                              color: Colors.red,
-                              width: 2.0,
-                            ), //포커스 상태 테두리 색상
-                          ), //테두리
-                          filled: true, //색채우기
-                          fillColor: Colors.white, //흰색
+                  controlsBuilder:
+                      (BuildContext context, ControlsDetails details) {
+                    return Column(
+                      children: [
+                        SizedBox(
+                          height: 10,
                         ),
-                        obscureText: false, // 비밀번호 입력 시 텍스트 표시
-                      ),
-                    ), //닉네임 입력
-                    const SizedBox(height: 10), //간격
-                    SizedBox(
-                      width: 200,
-                      height: 40,
-                      child: TextFormField(
-                        //텍스트 입력 위젯, textField기반, 유효성 검사를 할 때 유용
-                        decoration: const InputDecoration(
-                          //텍스트입력필드의 디자인 추가
-                          labelText: 'ID', //내부에 표시되는 레이블 텍스트
-                          border:
-                              OutlineInputBorder(), //기본 테두리 설정.. TextFormField는 활성/포커스 상태 두 가지가 있어서 각각 설정해줘야 함
-                          enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Colors.black,
-                            width: 2.0,
-                          )), //활성 상태 보더 속성),
-                          focusedBorder: OutlineInputBorder(
-                            //창을 클릭했을때 보더 속성
-                            borderSide: BorderSide(
-                              color: Colors.red,
-                              width: 2.0,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            ElevatedButton(
+                              onPressed: details.onStepContinue,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red, // 흰색 배경
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(10), // 곡률 설정
+                                ), // 검정 글씨
+                              ),
+                              child: const Text('Continue'),
                             ),
-                          ),
-                          filled: true, //색채우기
-                          fillColor: Colors.white, //흰색
-                        ),
-                        obscureText: false, // 텍스트 숨김
-                      ),
-                    ), //ID 입력
-                    const SizedBox(height: 10), //간격
-                    SizedBox(
-                      width: 200,
-                      height: 40,
-                      child: TextFormField(
-                        //텍스트 입력 위젯, textField기반, 유효성 검사를 할 때 유용
-                        decoration: const InputDecoration(
-                          //텍스트입력필드의 디자인 추가
-                          labelText: 'Password', //내부에 표시되는 레이블 텍스트
-                          border:
-                              OutlineInputBorder(), //기본 테두리 설정.. TextFormField는 활성/포커스 상태 두 가지가 있어서 각각 설정해줘야 함
-                          enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                            color: Colors.black,
-                            width: 2.0,
-                          )), //활성 상태 보더 속성),
-                          focusedBorder: OutlineInputBorder(
-                            //창을 클릭했을때 보더 속성
-                            borderSide: BorderSide(
-                              color: Colors.red,
-                              width: 2.0,
+                            SizedBox(
+                              width: 10,
                             ),
-                          ),
-                          filled: true, //색채우기
-                          fillColor: Colors.white, //흰색
+                            ElevatedButton(
+                              onPressed: details.onStepCancel,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white, // 흰색 배경
+                                foregroundColor: Colors.black,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(10), // 곡률 설정
+                                ), // 검정 글씨
+                              ),
+                              child: const Text('Cancel'),
+                            ),
+                          ],
                         ),
-                        obscureText: true, // 비밀번호 입력 시 텍스트 숨김
-                      ),
-                    ), //PW 입력
-                    const SizedBox(height: 30), //간격
-                    ElevatedButton(
-                      onPressed: () {
-                        context.push('/loginScreen');
-                      },
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white, // 텍스트 및 아이콘 색상
-                        backgroundColor: Colors.red, // 배경색
-                        elevation: 0, // 버튼 그림자 높이
-                        minimumSize: const Size(200, 40),
-                        padding: const EdgeInsets.symmetric(
-                            //버튼내부여백
-                            horizontal: 24, //양쪽여백 각 24픽셀
-                            vertical: 16 //상하여백 각 16픽셀
-                            ), // 버튼 내부 여백
-                        shape: RoundedRectangleBorder(
-                          //모서리설정 : 둥근 사각형 외곽
-                          borderRadius:
-                              BorderRadius.circular(13), // 모서리 둥글기 결정 (숫자=반지름값)
-                        ),
-                      ), //실행 시 유효성 검사 및 페이지 이동
-                      child: const Text('완료'),
-                    ),
-                    const SizedBox(height: 50),
-                  ],
+                      ],
+                    );
+                  },
                 ),
               ),
-            );
-          },
-        ),
-      ),
+            ),
     );
   }
 }
