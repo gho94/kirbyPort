@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:kirby_port_app/widgets/page/my_room_page.dart';
-import 'package:kirby_port_app/widgets/page/room_list_page.dart';
+import 'package:kirby_port_app/screen/my_room_screen.dart';
+import 'package:kirby_port_app/screen/room_list_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -39,8 +39,8 @@ class _HomeScreenState extends State<HomeScreen> {
         controller: _pageController,
         onPageChanged: _onPageChanged,
         children: const [
-          RoomListPage(),
-          MyRoomPage(),
+          RoomListScreen(),
+          MyRoomScreen(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
