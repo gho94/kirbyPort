@@ -53,11 +53,10 @@ class _RoomListScreenState extends State<RoomListScreen> with InfiniteScrollMixi
                       if (roomViewModel.loading && index == filterRooms.length) {
                         return const Center(child: CircularProgressIndicator());
                       }
-
                       final room = filterRooms[index];
                       final topic = topicViewModel.topics.where((topic) => topic.id == room.topicId).firstOrNull;
 
-                      return RoomItem(room: room, topicName: topic?.name ?? "Unknown");
+                      return RoomItem(room: room, topicName: topic?.name ?? "Unknown", index: index);
                     },
                   ),
                 )

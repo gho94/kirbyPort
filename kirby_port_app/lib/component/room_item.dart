@@ -4,11 +4,14 @@ import 'package:intl/intl.dart';
 import 'package:kirby_port_app/model/room_model.dart';
 import 'package:kirby_port_app/view_model/room_view_model.dart';
 import 'package:provider/provider.dart';
+import '../service/local_notification_manager.dart';
 
 class RoomItem extends StatelessWidget {
   final Room room;
   final String topicName;
-  const RoomItem({super.key, required this.room, required this.topicName});
+  final int index;
+
+  const RoomItem({super.key, required this.room, required this.topicName, required this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +41,12 @@ class RoomItem extends StatelessWidget {
                 children: [
                   if (room.reserveYn == "N")
                     ElevatedButton(
-                      onPressed: () => _updateReserveYn(context, "Y"),
+                      onPressed: () {
+                        _updateReserveYn(context, "Y");
+                        LocalNotificationManager.showInstanceNotification(room.name, "예약 성공", index);
+                        DateTime startTime = DateTime.parse(room.startTime);
+                        LocalNotificationManager.scheduleNotification(room.name, "방이 오픈 되었커비 ", startTime, index);
+                      },
                       child: const Text("예약"),
                     )
                   else ...[
@@ -49,7 +57,11 @@ class RoomItem extends StatelessWidget {
                     ),
                     const SizedBox(width: 10),
                     ElevatedButton(
-                      onPressed: () => _updateReserveYn(context, "N"),
+                      onPressed: () {
+                        _updateReserveYn(context, "N");
+                        LocalNotificationManager.cancelNotification(index);
+                        LocalNotificationManager.showInstanceNotification(room.name, "예약 취소", index);
+                      },
                       child: const Text("취소"),
                     ),
                   ]
@@ -65,10 +77,14 @@ class RoomItem extends StatelessWidget {
   void _updateReserveYn(BuildContext context, String reserveYn) {
     final roomViewModel = Provider.of<RoomViewModel>(context, listen: false);
 
-    roomViewModel.updateReserveYn(
-      roomId: room.id!,
-      reserveYn: reserveYn,
-      updatedAt: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
-    );
+    if (room.id != null) {
+      roomViewModel.updateReserveYn(
+        roomId: room.id!,
+        reserveYn: reserveYn,
+        updatedAt: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
+      );
+    } else {
+      print("Room ID is null, cannot update reserve status.");
+    }
   }
 }
