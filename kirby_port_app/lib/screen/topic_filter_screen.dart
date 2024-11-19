@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:kirby_port_app/controller/topic_controller.dart';
 import 'package:kirby_port_app/model/topic_model.dart';
+import 'package:kirby_port_app/view_model/topic_view_model.dart';
 import 'package:provider/provider.dart';
 
 class TopicFilterScreen extends StatelessWidget {
@@ -8,8 +8,8 @@ class TopicFilterScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<TopicController>(
-      builder: (context, topicController, child) {
+    return Consumer<TopicViewModel>(
+      builder: (context, topicViewModel, child) {
         return Scaffold(
           appBar: AppBar(
             title: const Text("주제별 필터"),
@@ -26,11 +26,11 @@ class TopicFilterScreen extends StatelessWidget {
             child: Wrap(
               spacing: 20.0,
               runSpacing: 20.0,
-              children: topicController.topics.map((topic) {
+              children: topicViewModel.topics.map((topic) {
                 return ChoiceChip(
                   label: Text(topic.name),
-                  selected: topicController.selectedTopicIds.contains(topic.id),
-                  onSelected: (selected) => topicController.toggleTopicSelection(topic.id!),
+                  selected: topicViewModel.selectedTopicIds.contains(topic.id),
+                  onSelected: (selected) => topicViewModel.toggleTopicSelection(topic.id!),
                 );
               }).toList(),
             ),
@@ -41,7 +41,7 @@ class TopicFilterScreen extends StatelessWidget {
               final topicName = await _showAddTopicDialog(context);
               if (topicName != null && context.mounted) {
                 Topic topic = Topic(name: topicName, createdAt: DateTime.now().toString());
-                Provider.of<TopicController>(context, listen: false).addTopic(topic);
+                Provider.of<TopicViewModel>(context, listen: false).addTopic(topic);
               }
             },
           ),
