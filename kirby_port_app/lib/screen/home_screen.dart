@@ -31,9 +31,29 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("방 목록"),
+        title: const Text(
+          "KriBy - Port",
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
         centerTitle: true,
-        actions: [IconButton(icon: const Icon(Icons.filter_alt), onPressed: () => context.push("/topic-filter"))],
+        actions: [
+          IconButton(
+              icon: Icon(
+                Icons.filter_alt_outlined,
+                color: Colors.red[900],
+                size: 30,
+              ),
+              onPressed: () => context.push("/topic-filter")),
+          IconButton(
+              icon: Icon(
+                Icons.add,
+                color: Colors.red[900],
+                size: 30,
+              ),
+              onPressed: () => context.push("/create-room")),
+        ],
       ),
       body: PageView(
         controller: _pageController,
