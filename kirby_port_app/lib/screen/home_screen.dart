@@ -45,14 +45,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Colors.red[900],
                 size: 30,
               ),
-              onPressed: () => context.push("/topic-filter")),
+              onPressed: () => context.push("/home/topic-filter")),
           IconButton(
               icon: Icon(
                 Icons.add,
                 color: Colors.red[900],
                 size: 30,
               ),
-              onPressed: () => context.push("/create-room")),
+              onPressed: () => context.push("/home/create-room")),
         ],
       ),
       body: PageView(
