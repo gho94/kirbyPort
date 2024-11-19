@@ -25,6 +25,13 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp.router(
         routerConfig: router,
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          appBarTheme: AppBarTheme(backgroundColor: Colors.grey[900]),
+          scaffoldBackgroundColor: Colors.grey[900],
+          bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+              backgroundColor: Colors.black26, selectedItemColor: Colors.red),
+        ),
       ),
     );
   }
