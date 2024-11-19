@@ -64,7 +64,7 @@ class _RoomListScreenState extends State<RoomListScreen> with InfiniteScrollMixi
             ),
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: () => context.push("/create-room"),
+            onPressed: () => context.push("/home/create-room"),
             child: const Icon(Icons.add),
           ),
         );
