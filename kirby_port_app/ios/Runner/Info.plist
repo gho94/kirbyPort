@@ -45,5 +45,18 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
+		<key>UIUserTrackingUsageDescription</key>
+    	<string>앱에서 푸시 알림을 보낼 수 있도록 권한을 요청합니다.</string>
+
+    	<key>UIBackgroundModes</key>
+    	<array>
+    		<string>fetch</string>
+    		<string>remote-notification</string>
+    	</array>
+
+    	<key>UIUserNotificationUsageDescription</key>
+    	<string>앱에서 로컬 알림을 보내기 위해 권한이 필요합니다.</string>
+		
 </dict>
 </plist>
