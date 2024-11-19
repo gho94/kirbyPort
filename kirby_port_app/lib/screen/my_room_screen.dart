@@ -58,7 +58,11 @@ class _MyRoomScreenState extends State<MyRoomScreen> with InfiniteScrollMixin {
                       final room = filterRooms[index];
                       final topic = topicViewModel.topics.where((topic) => topic.id == room.topicId).firstOrNull;
 
-                      return RoomItem(room: room, topicName: topic?.name ?? "Unknown");
+                      return RoomItem(
+                        room: room,
+                        topicName: topic?.name ?? "Unknown",
+                        index: index,
+                      );
                     },
                   ),
                 )
