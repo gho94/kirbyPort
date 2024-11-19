@@ -11,11 +11,7 @@ class RoomItem extends StatelessWidget {
   final String topicName;
   final int index;
 
-  const RoomItem(
-      {super.key,
-      required this.room,
-      required this.topicName,
-      required this.index});
+  const RoomItem({super.key, required this.room, required this.topicName, required this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -73,19 +69,15 @@ class RoomItem extends StatelessWidget {
                       ),
                       onPressed: () {
                         _updateReserveYn(context, "Y");
-                        LocalNotificationManager.showInstanceNotification(
-                            room.name, "예약 성공", index);
+                        LocalNotificationManager.showInstanceNotification(room.name, "예약 성공", index);
                         DateTime startTime = DateTime.parse(room.startTime);
-                        LocalNotificationManager.scheduleNotification(
-                            room.name, "방이 오픈 되었커비 ", startTime, index);
+                        LocalNotificationManager.scheduleNotification(room.name, "방이 오픈 되었커비 ", startTime, index);
                       },
                     )
                   else ...[
                     ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red[700],
-                          minimumSize: const Size(20, 40)),
-                      onPressed: () => context.push("/list"),
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.red[700], minimumSize: const Size(20, 40)),
+                      onPressed: () => context.push("/home/list"),
                       child: const Text(
                         "참여",
                         style: TextStyle(color: Colors.white),
@@ -93,14 +85,11 @@ class RoomItem extends StatelessWidget {
                     ),
                     const SizedBox(width: 10),
                     ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.grey,
-                          minimumSize: const Size(20, 40)),
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.grey, minimumSize: const Size(20, 40)),
                       onPressed: () {
                         _updateReserveYn(context, "N");
                         LocalNotificationManager.cancelNotification(index);
-                        LocalNotificationManager.showInstanceNotification(
-                            room.name, "예약 취소", index);
+                        LocalNotificationManager.showInstanceNotification(room.name, "예약 취소", index);
                       },
                       child: const Text(
                         "취소",

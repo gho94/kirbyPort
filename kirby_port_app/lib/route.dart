@@ -3,17 +3,33 @@ import 'package:go_router/go_router.dart';
 import 'package:kirby_port_app/screen/chat_screen.dart';
 import 'package:kirby_port_app/screen/create_room_screen.dart';
 import 'package:kirby_port_app/screen/home_screen.dart';
+import 'package:kirby_port_app/screen/join_screen.dart';
+import 'package:kirby_port_app/screen/login_screen.dart';
 import 'package:kirby_port_app/screen/my_room_screen.dart';
 import 'package:kirby_port_app/screen/room_list_screen.dart';
 import 'package:kirby_port_app/screen/topic_filter_screen.dart';
 
 GoRouter get router => _router;
 
-// Branch Protection Rule  테스트
 final GoRouter _router = GoRouter(
+  initialLocation: '/login',
   routes: <RouteBase>[
     GoRoute(
-      path: '/',
+      path: '/login',
+      builder: (BuildContext context, GoRouterState state) {
+        return const LoginScreen();
+      },
+      routes: <RouteBase>[
+        GoRoute(
+          path: "join",
+          builder: (BuildContext context, GoRouterState state) {
+            return const JoinScreen();
+          },
+        ),
+      ],
+    ),
+    GoRoute(
+      path: '/home',
       builder: (BuildContext context, GoRouterState state) {
         return const HomeScreen();
       },

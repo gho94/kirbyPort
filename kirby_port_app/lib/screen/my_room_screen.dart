@@ -70,7 +70,7 @@ class _MyRoomScreenState extends State<MyRoomScreen> with InfiniteScrollMixin {
             ),
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: () => context.push("/create-room"),
+            onPressed: () => context.push("/home/create-room"),
             child: const Icon(Icons.add),
           ),
         );
