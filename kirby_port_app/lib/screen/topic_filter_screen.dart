@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kirby_port_app/component/topic_container.dart';
 import 'package:kirby_port_app/model/topic_model.dart';
 import 'package:kirby_port_app/view_model/topic_view_model.dart';
 import 'package:provider/provider.dart';
@@ -10,10 +11,12 @@ class TopicFilterScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<TopicViewModel>(
       builder: (context, topicViewModel, child) {
+        final TextEditingController textController = TextEditingController();
         return Scaffold(
           appBar: AppBar(
             title: const Text("주제별 필터"),
             centerTitle: true,
+            foregroundColor: Colors.white,
             actions: [
               IconButton(
                 onPressed: () => Navigator.pop(context),
@@ -27,44 +30,67 @@ class TopicFilterScreen extends StatelessWidget {
               spacing: 20.0,
               runSpacing: 20.0,
               children: topicViewModel.topics.map((topic) {
-                return ChoiceChip(
-                  label: Text(topic.name),
-                  selected: topicViewModel.selectedTopicIds.contains(topic.id),
-                  onSelected: (selected) => topicViewModel.toggleTopicSelection(topic.id!),
+                return GestureDetector(
+                  // todo : 구현 해야함
+                  onLongPress: () => topicViewModel.deleteTopic(topic.id!),
+                  onTap: () => topicViewModel.toggleTopicSelection(topic.id!),
+                  child: TopicContainer(
+                    text: topic.name,
+                    isSelected:
+                        topicViewModel.selectedTopicIds.contains(topic.id),
+                  ),
                 );
               }).toList(),
             ),
           ),
-          floatingActionButton: FloatingActionButton(
-            child: const Icon(Icons.add),
-            onPressed: () async {
-              final topicName = await _showAddTopicDialog(context);
-              if (topicName != null && context.mounted) {
-                Topic topic = Topic(name: topicName, createdAt: DateTime.now().toString());
-                Provider.of<TopicViewModel>(context, listen: false).addTopic(topic);
-              }
-            },
+          bottomSheet: Container(
+            color: Colors.grey[900],
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: textController,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                final topicName = textController.text.trim();
+                                if (topicName.isNotEmpty) {
+                                  final newTopic = Topic(
+                                    name: topicName,
+                                    createdAt: DateTime.now().toString(),
+                                  );
+                                  topicViewModel.addTopic(newTopic);
+                                  textController.clear(); // 텍스트 필드 초기화
+                                }
+                              },
+                              icon: const Icon(Icons.send, color: Colors.red),
+                            ),
+                            hintText: "메시지를 입력하세요...",
+                            hintStyle: const TextStyle(color: Colors.grey),
+                            filled: true,
+                            fillColor: Colors.black,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                ],
+              ),
+            ),
           ),
-        );
-      },
-    );
-  }
-
-  Future<String?> _showAddTopicDialog(BuildContext context) {
-    return showDialog<String>(
-      context: context,
-      builder: (context) {
-        String? topic;
-        return AlertDialog(
-          title: const Text("주제 추가"),
-          content: TextField(
-            onChanged: (value) => topic = value,
-            decoration: const InputDecoration(hintText: "주제를 입력하세요."),
-          ),
-          actions: <Widget>[
-            TextButton(child: const Text("취소"), onPressed: () => Navigator.of(context).pop()),
-            TextButton(child: const Text("확인"), onPressed: () => Navigator.of(context).pop(topic)),
-          ],
         );
       },
     );
