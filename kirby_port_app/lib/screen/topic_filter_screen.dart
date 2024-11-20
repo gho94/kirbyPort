@@ -32,7 +32,19 @@ class TopicFilterScreen extends StatelessWidget {
               children: topicViewModel.topics.map((topic) {
                 return GestureDetector(
                   // todo : 구현 해야함
-                  onLongPress: () => topicViewModel.deleteTopic(topic.id!),
+                  onLongPress: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          "'${topic.name}' 토픽이 삭제되었습니다.",
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        backgroundColor: Colors.red,
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                    topicViewModel.deleteTopic(topic.id!);
+                  },
                   onTap: () => topicViewModel.toggleTopicSelection(topic.id!),
                   child: TopicContainer(
                     text: topic.name,
