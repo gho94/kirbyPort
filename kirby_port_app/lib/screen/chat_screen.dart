@@ -66,7 +66,6 @@ class _ChatScreenState extends State<ChatScreen> {
               "오징어게임 2 1화",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
                 fontSize: 25,
               ),
             ),
@@ -74,8 +73,7 @@ class _ChatScreenState extends State<ChatScreen> {
               Padding(
                 padding: const EdgeInsets.only(right: 8.0),
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                   decoration: BoxDecoration(
                     color: Colors.red,
                     borderRadius: BorderRadius.circular(12),
@@ -84,7 +82,6 @@ class _ChatScreenState extends State<ChatScreen> {
                     "LIVE 🟡",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
                       fontSize: 12,
                     ),
                   ),
@@ -99,7 +96,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   Expanded(
                     child: Container(
                       decoration: const BoxDecoration(
-                        color: Colors.white,
+                        color: Colors.white, // 채팅방 확인 예정(서버열려야함)
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(20),
                           topRight: Radius.circular(20),
@@ -113,21 +110,15 @@ class _ChatScreenState extends State<ChatScreen> {
                           itemBuilder: (context, index) {
                             final message = messages[index];
                             final isMine = message['isMine'] as bool;
-                            final senderName =
-                                message['senderName'] ?? "Unknown";
+                            final senderName = message['senderName'] ?? "Unknown";
                             return Align(
-                              alignment: isMine
-                                  ? Alignment.centerRight
-                                  : Alignment.centerLeft,
+                              alignment: isMine ? Alignment.centerRight : Alignment.centerLeft,
                               child: Column(
-                                crossAxisAlignment: isMine
-                                    ? CrossAxisAlignment.end
-                                    : CrossAxisAlignment.start,
+                                crossAxisAlignment: isMine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                                 children: [
                                   if (!isMine)
                                     Padding(
-                                      padding:
-                                          const EdgeInsets.only(bottom: 4.0),
+                                      padding: const EdgeInsets.only(bottom: 4.0),
                                       child: Text(
                                         senderName,
                                         style: const TextStyle(
@@ -138,24 +129,19 @@ class _ChatScreenState extends State<ChatScreen> {
                                       ),
                                     ),
                                   Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 12, vertical: 8),
+                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                                     margin: const EdgeInsets.symmetric(
                                       vertical: 4,
                                       // horizontal: 8,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: isMine
-                                          ? Colors.red.shade500
-                                          : Colors.grey.shade300,
+                                      color: isMine ? Colors.red.shade500 : Colors.grey.shade300,
                                       borderRadius: BorderRadius.circular(16),
                                     ),
                                     child: Text(
                                       message['text'],
                                       style: TextStyle(
-                                        color: isMine
-                                            ? Colors.white
-                                            : Colors.black,
+                                        color: isMine ? Colors.white : Colors.black, //서버로 확인
                                         fontSize: 15,
                                       ),
                                     ),
@@ -169,18 +155,16 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                   ),
                   Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     child: Row(
                       children: [
                         Expanded(
                           child: TextField(
+                            cursorColor: Colors.white, //커서 색상 추가
                             controller: viewModel.messageController,
-                            style: const TextStyle(color: Colors.white),
                             decoration: InputDecoration(
                               prefixIcon: IconButton(
-                                  onPressed: () =>
-                                      viewModel.showHearts(context),
+                                  onPressed: () => viewModel.showHearts(context),
                                   icon: const Icon(
                                     Icons.favorite,
                                     color: Colors.red,

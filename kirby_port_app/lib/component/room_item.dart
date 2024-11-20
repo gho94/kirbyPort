@@ -19,8 +19,7 @@ class RoomItem extends StatelessWidget {
       direction: DismissDirection.horizontal,
       onDismissed: (direction) {
         _deleteRoom(context);
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('${room.name} 삭제됨')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${room.name} 삭제됨')));
       },
       background: _buildSwipeBackground(Colors.red),
       secondaryBackground: _buildSwipeBackground(Colors.red),
@@ -52,21 +51,20 @@ class RoomItem extends StatelessWidget {
                   children: [
                     Text(
                       topicName,
-                      style: const TextStyle(color: Colors.white, fontSize: 13),
+                      style: const TextStyle(fontSize: 13),
                     ),
                     Text(
                       room.name,
-                      style: const TextStyle(color: Colors.white, fontSize: 20),
+                      style: const TextStyle(fontSize: 23),
                     ),
                     const SizedBox(height: 5),
                     Text(
                       "Start: ${room.startTime}",
-                      style: const TextStyle(color: Colors.white, fontSize: 12),
+                      style: const TextStyle(fontSize: 12),
                     ),
                     Text(
                       "End: ${room.endTime}",
-                      style: const TextStyle(
-                          color: Colors.white, fontSize: 12), //사이즈변경
+                      style: const TextStyle(fontSize: 12), //사이즈변경
                     ),
                   ],
                 ),
@@ -81,35 +79,27 @@ class RoomItem extends StatelessWidget {
                           ),
                           onPressed: () {
                             _updateReserveYn(context, "Y");
-                            LocalNotificationManager.showInstanceNotification(
-                                room.name, "예약 성공", room.id!);
+                            LocalNotificationManager.showInstanceNotification(room.name, "예약 성공", room.id!);
                             DateTime startTime = DateTime.parse(room.startTime);
-                            LocalNotificationManager.scheduleNotification(
-                                room.name, "방이 오픈 되었커비 ", startTime, room.id!);
+                            LocalNotificationManager.scheduleNotification(room.name, "방이 오픈 되었커비 ", startTime, room.id!);
                           },
                         )
                       else ...[
                         ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red[700],
-                              minimumSize: const Size(20, 40)),
+                          style: ElevatedButton.styleFrom(backgroundColor: Colors.red[700], minimumSize: const Size(20, 40)),
                           onPressed: () => context.push("/home/list"),
                           child: const Text(
                             "참여",
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(color: Colors.white), //보라색
                           ),
                         ),
                         const SizedBox(width: 10),
                         ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.grey,
-                              minimumSize: const Size(20, 40)),
+                          style: ElevatedButton.styleFrom(backgroundColor: Colors.grey, minimumSize: const Size(20, 40)),
                           onPressed: () {
                             _updateReserveYn(context, "N");
-                            LocalNotificationManager.cancelNotification(
-                                room.id!);
-                            LocalNotificationManager.showInstanceNotification(
-                                room.name, "예약 취소", room.id!);
+                            LocalNotificationManager.cancelNotification(room.id!);
+                            LocalNotificationManager.showInstanceNotification(room.name, "예약 취소", room.id!);
                           },
                           child: const Text(
                             "취소",
@@ -149,7 +139,6 @@ class RoomItem extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: const Icon(
         Icons.delete,
-        color: Colors.white,
       ),
     );
   }
