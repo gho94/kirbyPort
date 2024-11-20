@@ -16,21 +16,27 @@ class CreateRoomScreen extends StatefulWidget {
 class _CreateRoomScreenState extends State<CreateRoomScreen> {
   final _textEditingController = TextEditingController();
   Topic? _selectedTopic;
-  DateTime? _selectedDateTime;
+  DateTime? _selectedDate;
+  TimeOfDay? _selectedTime;
 
   bool _isActionEnabled = false;
 
   void _addRoom() {
-    final createdAtLocalDT = DateTime.now();
-    final startDateTime = _selectedDateTime!;
+    DateTime selectedDateTime = DateTime(
+      _selectedDate!.year,
+      _selectedDate!.month,
+      _selectedDate!.day,
+      _selectedTime!.hour,
+      _selectedTime!.minute,
+    );
 
     Room room = Room(
       name: _textEditingController.text,
-      startTime: DateFormat('yyyy-MM-dd HH:mm:ss').format(startDateTime),
-      endTime: DateFormat('yyyy-MM-dd HH:mm:ss').format(startDateTime.add(const Duration(hours: 1))),
+      startTime: DateFormat('yyyy-MM-dd HH:mm:ss').format(selectedDateTime),
+      endTime: DateFormat('yyyy-MM-dd HH:mm:ss').format(selectedDateTime.add(const Duration(hours: 1))),
       topicId: _selectedTopic?.id ?? 1,
       playerId: 1,
-      createdAt: DateFormat('yyyy-MM-dd HH:mm:ss').format(createdAtLocalDT),
+      createdAt: DateTime.now().toString(),
       reserveYn: "N",
     );
 
@@ -42,7 +48,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
 
   void validActionEnable() {
     setState(() {
-      _isActionEnabled = _textEditingController.text.isNotEmpty && _selectedTopic != null && _selectedDateTime != null;
+      _isActionEnabled = _textEditingController.text.isNotEmpty && _selectedTopic != null && _selectedDate != null && _selectedTime != null;
     });
   }
 
@@ -71,81 +77,85 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
           )
         ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 70, horizontal: 25),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "방 이름",
-                style: TextStyle(color: Colors.white),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 70, horizontal: 25),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "방 이름",
+              style: TextStyle(color: Colors.white),
+            ),
+            const SizedBox(height: 18),
+            TextField(
+              controller: _textEditingController,
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                labelText: ' 채팅방 이름을 지정',
+                labelStyle: TextStyle(color: Colors.red.withOpacity(0.6)),
               ),
-              const SizedBox(height: 18),
-              TextField(
-                controller: _textEditingController,
-                decoration: InputDecoration(
-                    labelText: ' 채팅방 이름을 지정',
-                    labelStyle: TextStyle(color: Colors.red.withOpacity(0.6)),
-                    border: const OutlineInputBorder(
-                      borderSide: BorderSide(), //기본설정
-                    ),
-                    enabledBorder: const OutlineInputBorder(
-                      //포커스가 없는 상태의 테두리
-                      borderSide: BorderSide(
-                        color: Color.fromARGB(255, 214, 0, 0),
-                        width: 2,
-                      ),
-                    ),
-                    focusedBorder: const OutlineInputBorder(
-                      //포커스된 상태의 테두리
-                      borderSide: BorderSide(
-                        color: Color.fromARGB(255, 214, 0, 0),
-                        width: 2,
-                      ),
-                    ),
-                    filled: true,
-                    fillColor: Colors.grey[900]),
-                onChanged: (value) => validActionEnable(),
-                cursorColor: Colors.white,
+              onChanged: (value) => validActionEnable(),
+            ),
+            const SizedBox(height: 20),
+            const Text("주제 선택",
+                style: TextStyle(
+                  color: Colors.white,
+                )),
+            const SizedBox(height: 5),
+            ElevatedButton(
+              onPressed: () => _showTopicSelectionDialog(context),
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(double.infinity, 36),
+                backgroundColor: Colors.red[900],
               ),
-              const SizedBox(height: 40),
-              const Text("주제 선택",
-                  style: TextStyle(
-                    color: Colors.white,
-                  )),
-              const SizedBox(height: 5),
-              ElevatedButton(
-                onPressed: () => _showTopicSelectionDialog(context),
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 36),
-                  backgroundColor: Colors.red[900],
+              child: Text(
+                _selectedTopic?.name ?? "선택하기",
+                style: const TextStyle(
+                  color: Colors.white,
                 ),
-                child: Text(
-                  _selectedTopic?.name ?? "선택하기",
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              "날짜 선택",
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 5),
+            ElevatedButton(
+              onPressed: _selectDate,
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(double.infinity, 36),
+                backgroundColor: Colors.red[900],
+              ),
+              child: Text(_selectedDate != null ? DateFormat('yyyy-MM-dd').format(_selectedDate!) : "날짜 선택하기",
                   style: const TextStyle(
                     color: Colors.white,
-                  ),
+                  )),
+            ),
+            const SizedBox(height: 5),
+            const Text(
+              "시간 선택",
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 5),
+            ElevatedButton(
+              onPressed: _selectTime,
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(double.infinity, 36),
+                backgroundColor: Colors.red[900],
+              ),
+              child: Text(
+                _selectedTime != null ? getFormattedTime(_selectedTime!) : "시간 선택하기",
+                style: const TextStyle(
+                  color: Colors.white,
                 ),
               ),
-              const SizedBox(height: 20),
-              const Text("날짜 및 시간 선택", style: TextStyle(color: Colors.white)),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: _selectDateTime,
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50),
-                  backgroundColor: Colors.red[900],
-                ),
-                child: Text(
-                  _selectedDateTime != null ? getFormattedDateTime(_selectedDateTime!) : "날짜 및 시간 선택하기",
-                  style: const TextStyle(color: Colors.white),
-                ),
-              ),
-              const SizedBox(height: 80),
-              _buildPreviewCard(),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -186,98 +196,38 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
     );
   }
 
-  Future<void> _selectDateTime() async {
+  Future<void> _selectDate() async {
     final selectedDate = await showDatePicker(
       context: context,
-      initialDate: _selectedDateTime ?? DateTime.now(),
-      firstDate: DateTime(2000),
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
       lastDate: DateTime(2100),
     );
 
-    if (!mounted) return;
+    if (selectedDate != null && selectedDate != _selectedDate) {
+      setState(() {
+        _selectedDate = selectedDate;
+        validActionEnable();
+      });
+    }
+  }
+
+  Future<void> _selectTime() async {
     final selectedTime = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay.fromDateTime(_selectedDateTime ?? DateTime.now()),
+      initialTime: _selectedTime ?? TimeOfDay.now(),
     );
 
-    setState(() {
-      _selectedDateTime = DateTime(
-        selectedDate!.year,
-        selectedDate.month,
-        selectedDate.day,
-        selectedTime!.hour,
-        selectedTime.minute,
-      );
-      validActionEnable();
-    });
-  }
-
-  String getFormattedDateTime(DateTime dateTime) {
-    return DateFormat('yyyy-MM-dd HH:mm').format(dateTime);
-  }
-
-  Widget _buildPreviewCard() {
-    return Card(
-      color: Colors.black,
-      elevation: 4.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '채팅방 생성 미리보기',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.red[900],
-              ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              _textEditingController.text,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 10),
-            _buildPreviewRow(_selectedTopic?.name ?? "선택되지 않음"),
-            const SizedBox(height: 10),
-            _buildPreviewRow(_selectedDateTime != null ? getFormattedDateTime(_selectedDateTime!) : "선택되지 않음"),
-            const SizedBox(height: 10),
-            _buildPreviewRow("~ ${_getEndTimeFormatted() ?? "선택되지 않음"}")
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPreviewRow(String value) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-      ],
-    );
-  }
-
-  String? _getEndTimeFormatted() {
-    if (_selectedDateTime != null) {
-      DateTime endTime = _selectedDateTime!.add(const Duration(hours: 1));
-      return getFormattedDateTime(endTime);
+    if (selectedTime != null && selectedTime != _selectedTime) {
+      setState(() {
+        _selectedTime = selectedTime;
+        validActionEnable();
+      });
     }
-    return null;
+  }
+
+  String getFormattedTime(TimeOfDay timeOfDay) {
+    final DateTime dateTime = DateTime(2024, 1, 1, timeOfDay.hour, timeOfDay.minute);
+    return DateFormat('HH:mm').format(dateTime);
   }
 }
