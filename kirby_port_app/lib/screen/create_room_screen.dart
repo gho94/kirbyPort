@@ -33,8 +33,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
     Room room = Room(
       name: _textEditingController.text,
       startTime: DateFormat('yyyy-MM-dd HH:mm:ss').format(selectedDateTime),
-      endTime: DateFormat('yyyy-MM-dd HH:mm:ss')
-          .format(selectedDateTime.add(const Duration(hours: 1))),
+      endTime: DateFormat('yyyy-MM-dd HH:mm:ss').format(selectedDateTime.add(const Duration(hours: 1))),
       topicId: _selectedTopic?.id ?? 1,
       playerId: 1,
       createdAt: DateTime.now().toString(),
@@ -49,10 +48,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
 
   void validActionEnable() {
     setState(() {
-      _isActionEnabled = _textEditingController.text.isNotEmpty &&
-          _selectedTopic != null &&
-          _selectedDate != null &&
-          _selectedTime != null;
+      _isActionEnabled = _textEditingController.text.isNotEmpty && _selectedTopic != null && _selectedDate != null && _selectedTime != null;
     });
   }
 
@@ -152,10 +148,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
                 minimumSize: const Size(double.infinity, 36),
                 backgroundColor: Colors.red[900],
               ),
-              child: Text(
-                  _selectedDate != null
-                      ? DateFormat('yyyy-MM-dd').format(_selectedDate!)
-                      : "날짜 선택하기",
+              child: Text(_selectedDate != null ? DateFormat('yyyy-MM-dd').format(_selectedDate!) : "날짜 선택하기",
                   style: const TextStyle(
                     color: Colors.white,
                   )),
@@ -175,9 +168,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
                 backgroundColor: Colors.red[900],
               ),
               child: Text(
-                _selectedTime != null
-                    ? getFormattedTime(_selectedTime!)
-                    : "시간 선택하기",
+                _selectedTime != null ? getFormattedTime(_selectedTime!) : "시간 선택하기",
                 style: const TextStyle(
                   color: Colors.white,
                 ),
@@ -199,8 +190,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
             Wrap(
               spacing: 10.0,
               runSpacing: 10.0,
-              children:
-                  Provider.of<TopicViewModel>(context).topics.map((topic) {
+              children: Provider.of<TopicViewModel>(context).topics.map((topic) {
                 return SizedBox(
                   width: 46.0,
                   height: 46.0,
@@ -256,8 +246,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
   }
 
   String getFormattedTime(TimeOfDay timeOfDay) {
-    final DateTime dateTime =
-        DateTime(2024, 1, 1, timeOfDay.hour, timeOfDay.minute);
+    final DateTime dateTime = DateTime(2024, 1, 1, timeOfDay.hour, timeOfDay.minute);
     return DateFormat('HH:mm').format(dateTime);
   }
 }

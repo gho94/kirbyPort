@@ -5,9 +5,11 @@ import 'package:kirby_port_app/view_model/room_view_model.dart';
 import 'package:kirby_port_app/view_model/topic_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/data/latest.dart' as tz;
+import 'package:permission_handler/permission_handler.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Permission.notification.request();
   await LocalNotificationManager.init();
   tz.initializeTimeZones();
   runApp(const MyApp());

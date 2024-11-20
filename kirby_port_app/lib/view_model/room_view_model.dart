@@ -7,9 +7,6 @@ class RoomViewModel extends ChangeNotifier {
   List<Room> _rooms = [];
   List<Room> get rooms => _rooms;
 
-  int _currentPage = 0;
-  final int _pageSize = 10;
-
   bool _loading = false;
   bool get loading => _loading;
 
@@ -22,47 +19,29 @@ class RoomViewModel extends ChangeNotifier {
     await getRooms();
   }
 
-  Future<void> getRooms({int page = 1, int pageSize = 10}) async {
+  Future<List<Room>> getRooms() async {
     _loading = true;
     notifyListeners();
 
-    List<Room> allRooms = await _roomManager.getRooms(page: page, pageSize: pageSize);
-    _rooms = _filterExpiredRooms(allRooms);
-
-    // List<Room> newRooms = await _roomManager.getRooms(page: page, pageSize: pageSize);
-    // if (page == 1) {
-    //   _rooms = newRooms;
-    // } else {
-    //   _rooms.addAll(newRooms);
-    // }
-
+    _rooms = await _roomManager.getRooms();
     _loading = false;
     notifyListeners();
-  }
 
-  List<Room> _filterExpiredRooms(List<Room> rooms) {
-    DateTime now = DateTime.now();
-    return rooms.where((room) {
-      DateTime endTime = DateTime.parse(room.endTime);
-      return endTime.isAfter(now);
-    }).toList();
-  }
-
-  Future<void> loadMoreRooms() async {
-    if (_loading) return;
-
-    _currentPage++;
-    await getRooms(page: _currentPage, pageSize: _pageSize);
+    return _rooms;
   }
 
   Future<void> addRoom(Room room) async {
     await _roomManager.addRoom(room);
-    _rooms.add(room);
-    notifyListeners();
+    getRooms();
   }
 
   Future<void> updateReserveYn({required int roomId, required String reserveYn, required String updatedAt}) async {
     await _roomManager.updateReserveYn(roomId, reserveYn, updatedAt);
+    getRooms();
+  }
+
+  Future<void> removeRoom(int roomId) async {
+    await _roomManager.deleteRoom(roomId);
     getRooms();
   }
 }
