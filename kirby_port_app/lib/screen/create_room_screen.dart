@@ -17,7 +17,6 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
   final _textEditingController = TextEditingController();
   Topic? _selectedTopic;
   DateTime? _selectedDateTime;
-  TimeOfDay? _selectedTime;
 
   bool _isActionEnabled = false;
 
@@ -28,8 +27,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
     Room room = Room(
       name: _textEditingController.text,
       startTime: DateFormat('yyyy-MM-dd HH:mm:ss').format(startDateTime),
-      endTime: DateFormat('yyyy-MM-dd HH:mm:ss')
-          .format(startDateTime.add(const Duration(hours: 1))),
+      endTime: DateFormat('yyyy-MM-dd HH:mm:ss').format(startDateTime.add(const Duration(hours: 1))),
       topicId: _selectedTopic?.id ?? 1,
       playerId: 1,
       createdAt: DateFormat('yyyy-MM-dd HH:mm:ss').format(createdAtLocalDT),
@@ -44,9 +42,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
 
   void validActionEnable() {
     setState(() {
-      _isActionEnabled = _textEditingController.text.isNotEmpty &&
-          _selectedTopic != null &&
-          _selectedDateTime != null;
+      _isActionEnabled = _textEditingController.text.isNotEmpty && _selectedTopic != null && _selectedDateTime != null;
     });
   }
 
@@ -89,13 +85,31 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
               TextField(
                 controller: _textEditingController,
                 decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  labelText: ' 채팅방 이름을 지정',
-                  labelStyle: TextStyle(color: Colors.red.withOpacity(0.6)),
-                ),
+                    labelText: ' 채팅방 이름을 지정',
+                    labelStyle: TextStyle(color: Colors.red.withOpacity(0.6)),
+                    border: const OutlineInputBorder(
+                      borderSide: BorderSide(), //기본설정
+                    ),
+                    enabledBorder: const OutlineInputBorder(
+                      //포커스가 없는 상태의 테두리
+                      borderSide: BorderSide(
+                        color: Color.fromARGB(255, 214, 0, 0),
+                        width: 2,
+                      ),
+                    ),
+                    focusedBorder: const OutlineInputBorder(
+                      //포커스된 상태의 테두리
+                      borderSide: BorderSide(
+                        color: Color.fromARGB(255, 214, 0, 0),
+                        width: 2,
+                      ),
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey[900]),
                 onChanged: (value) => validActionEnable(),
+                cursorColor: Colors.white,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 40),
               const Text("주제 선택",
                   style: TextStyle(
                     color: Colors.white,
@@ -124,9 +138,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
                   backgroundColor: Colors.red[900],
                 ),
                 child: Text(
-                  _selectedDateTime != null
-                      ? getFormattedDateTime(_selectedDateTime!)
-                      : "날짜 및 시간 선택하기",
+                  _selectedDateTime != null ? getFormattedDateTime(_selectedDateTime!) : "날짜 및 시간 선택하기",
                   style: const TextStyle(color: Colors.white),
                 ),
               ),
@@ -149,11 +161,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
             Wrap(
               spacing: 10.0,
               runSpacing: 10.0,
-              children:
-              Provider
-                  .of<TopicViewModel>(context)
-                  .topics
-                  .map((topic) {
+              children: Provider.of<TopicViewModel>(context).topics.map((topic) {
                 return SizedBox(
                   width: 46.0,
                   height: 46.0,
@@ -177,7 +185,6 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
       },
     );
   }
-
 
   Future<void> _selectDateTime() async {
     final selectedDate = await showDatePicker(
@@ -241,9 +248,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
             const SizedBox(height: 10),
             _buildPreviewRow(_selectedTopic?.name ?? "선택되지 않음"),
             const SizedBox(height: 10),
-            _buildPreviewRow(_selectedDateTime != null
-                ? getFormattedDateTime(_selectedDateTime!)
-                : "선택되지 않음"),
+            _buildPreviewRow(_selectedDateTime != null ? getFormattedDateTime(_selectedDateTime!) : "선택되지 않음"),
             const SizedBox(height: 10),
             _buildPreviewRow("~ ${_getEndTimeFormatted() ?? "선택되지 않음"}")
           ],
@@ -276,4 +281,3 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
     return null;
   }
 }
-

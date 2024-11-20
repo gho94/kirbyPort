@@ -48,14 +48,8 @@ class RoomManager {
     );
   }
 
-  Future<List<Room>> getRooms({int page = 1, int pageSize = 10}) async {
-    final offset = (page - 1) * pageSize;
-    final List<Map<String, dynamic>> maps = await _database.query(
-      "room",
-      limit: pageSize,
-      offset: offset,
-    );
-
+  Future<List<Room>> getRooms() async {
+    final List<Map<String, dynamic>> maps = await _database.query("room");
     return List.generate(maps.length, (index) => Room.fromMap(maps[index]));
   }
 
@@ -67,8 +61,7 @@ class RoomManager {
     );
   }
 
-  Future<void> updateReserveYn(int roomId, String reserveYn,
-      String updatedAt) async {
+  Future<void> updateReserveYn(int roomId, String reserveYn, String updatedAt) async {
     final db = await database;
 
     await db.update(
@@ -83,18 +76,12 @@ class RoomManager {
   }
 
   Future<void> deleteRoom(int roomId) async {
-    final db = await _database;
+    final db = await database;
 
-    int result = await db.delete(
+    await db.delete(
       'room',
       where: 'id = ?',
       whereArgs: [roomId],
     );
-
-    if (result == 0) {
-      print('Room with ID $roomId 못찾음.');
-    } else {
-      print('Room with ID $roomId 삭제성공.');
-    }
   }
 }

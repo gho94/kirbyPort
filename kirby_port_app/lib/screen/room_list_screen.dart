@@ -17,7 +17,7 @@ class _RoomListScreenState extends State<RoomListScreen> with InfiniteScrollMixi
   @override
   void onScroll() {
     final roomViewModel = Provider.of<RoomViewModel>(context, listen: false);
-    roomViewModel.loadMoreRooms();
+    roomViewModel.getRooms();
   }
 
   @override
@@ -56,7 +56,7 @@ class _RoomListScreenState extends State<RoomListScreen> with InfiniteScrollMixi
                       final room = filterRooms[index];
                       final topic = topicViewModel.topics.where((topic) => topic.id == room.topicId).firstOrNull;
 
-                      return RoomItem(room: room, topicName: topic?.name ?? "Unknown", index: index);
+                      return RoomItem(room: room, topicName: topic?.name ?? "Unknown");
                     },
                   ),
                 )
