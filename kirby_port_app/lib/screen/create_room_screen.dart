@@ -92,15 +92,34 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
             ),
             const SizedBox(height: 18),
             TextField(
+              style: const TextStyle(color: Colors.white),
               controller: _textEditingController,
               decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                labelText: ' 채팅방 이름을 지정',
-                labelStyle: TextStyle(color: Colors.red.withOpacity(0.6)),
-              ),
+                  labelText: ' 채팅방 이름을 지정',
+                  labelStyle: TextStyle(color: Colors.red.withOpacity(0.6)),
+                  border: const OutlineInputBorder(
+                    borderSide: BorderSide(), //기본설정
+                  ),
+                  enabledBorder: const OutlineInputBorder(
+                    //포커스가 없는 상태의 테두리
+                    borderSide: BorderSide(
+                      color: Color.fromARGB(255, 214, 0, 0),
+                      width: 2,
+                    ),
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    //포커스된 상태의 테두리
+                    borderSide: BorderSide(
+                      color: Color.fromARGB(255, 214, 0, 0),
+                      width: 2,
+                    ),
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[900]),
               onChanged: (value) => validActionEnable(),
+              cursorColor: Colors.white,
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 40),
             const Text("주제 선택",
                 style: TextStyle(
                   color: Colors.white,
