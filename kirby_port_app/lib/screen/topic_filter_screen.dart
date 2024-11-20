@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kirby_port_app/component/topic_container.dart';
 import 'package:kirby_port_app/model/topic_model.dart';
+import 'package:go_router/go_router.dart';
+
 import 'package:kirby_port_app/view_model/topic_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -31,20 +33,8 @@ class TopicFilterScreen extends StatelessWidget {
               runSpacing: 20.0,
               children: topicViewModel.topics.map((topic) {
                 return GestureDetector(
-                  // todo : 구현 해야함
-                  onLongPress: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          "'${topic.name}' 토픽이 삭제되었습니다.",
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        backgroundColor: Colors.red,
-                        duration: const Duration(seconds: 2),
-                      ),
-                    );
-                    topicViewModel.deleteTopic(topic.id!);
-                  },
+                  onLongPress: () =>
+                      _showConfirmationDialog(context, topic, topicViewModel),
                   onTap: () => topicViewModel.toggleTopicSelection(topic.id!),
                   child: TopicContainer(
                     text: topic.name,
@@ -107,4 +97,56 @@ class TopicFilterScreen extends StatelessWidget {
       },
     );
   }
+}
+
+void _showConfirmationDialog(
+    BuildContext context, Topic topic, TopicViewModel topicViewModel) {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      backgroundColor: Colors.white,
+      title: Text(
+        "정말 삭제 하시겠습니까?",
+        style: TextStyle(
+          color: Colors.red[900],
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => context.pop(),
+          child: const Text(
+            "NO",
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        TextButton(
+          onPressed: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  "'${topic.name}' 토픽이 삭제되었습니다.",
+                  style: const TextStyle(color: Colors.white),
+                ),
+                backgroundColor: Colors.red,
+                duration: const Duration(seconds: 2),
+              ),
+            );
+            topicViewModel.deleteTopic(topic.id!);
+            context.pop();
+          },
+          child: const Text(
+            "YES",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
 }
