@@ -40,4 +40,11 @@ class TopicViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  void deleteTopic(int topicId) async {
+    final topicManager = TopicManager();
+    await topicManager.deleteTopic(topicId);
+    _topics.removeWhere((topic) => topic.id == topicId);
+    notifyListeners();
+  }
 }

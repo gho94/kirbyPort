@@ -47,4 +47,15 @@ class TopicManager {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
+
+  // 새로운 delete 메서드 추가
+  Future<void> deleteTopic(int topicId) async {
+    final db = await database;
+
+    await db.delete(
+      "topic",
+      where: "id = ?",
+      whereArgs: [topicId],
+    );
+  }
 }
