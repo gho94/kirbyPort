@@ -4,7 +4,9 @@ import 'package:sqflite/sqflite.dart';
 
 class RoomManager {
   static final RoomManager _instance = RoomManager._internal();
+
   factory RoomManager() => _instance;
+
   RoomManager._internal();
 
   late Database _database;
@@ -46,14 +48,8 @@ class RoomManager {
     );
   }
 
-  Future<List<Room>> getRooms({int page = 1, int pageSize = 10}) async {
-    final offset = (page - 1) * pageSize;
-    final List<Map<String, dynamic>> maps = await _database.query(
-      "room",
-      limit: pageSize,
-      offset: offset,
-    );
-
+  Future<List<Room>> getRooms() async {
+    final List<Map<String, dynamic>> maps = await _database.query("room");
     return List.generate(maps.length, (index) => Room.fromMap(maps[index]));
   }
 
@@ -75,6 +71,16 @@ class RoomManager {
         "updated_at": updatedAt,
       },
       where: "id = ?",
+      whereArgs: [roomId],
+    );
+  }
+
+  Future<void> deleteRoom(int roomId) async {
+    final db = await database;
+
+    await db.delete(
+      'room',
+      where: 'id = ?',
       whereArgs: [roomId],
     );
   }

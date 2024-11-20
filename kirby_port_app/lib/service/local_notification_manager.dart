@@ -5,7 +5,7 @@ class LocalNotificationManager {
   static final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   static void onDidReceiveNotification(NotificationResponse notificationResponse) async {
-    print('Notification clicked: ${notificationResponse.payload}');
+    //print('Notification clicked: ${notificationResponse.payload}');
   }
 
   static Future init() async {
@@ -33,9 +33,9 @@ class LocalNotificationManager {
             );
 
     if (iosNotificationPermissions != null && iosNotificationPermissions) {
-      print("iOS Notification Permissions Granted");
+      //print("iOS Notification Permissions Granted");
     } else {
-      print("iOS Notification Permissions Denied");
+      //print("iOS Notification Permissions Denied");
     }
   }
 
