@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class JoinScreen extends StatefulWidget {
-  const JoinScreen({super.key});
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({super.key});
 
   @override
-  State<JoinScreen> createState() => _JoinScreenState();
+  State<SignUpScreen> createState() => _JoinScreenState();
 }
 
-class _JoinScreenState extends State<JoinScreen> {
+class _JoinScreenState extends State<SignUpScreen> {
   int _currentStep = 0;
   bool _isLoading = false; // 로딩 상태
   final _emailController = TextEditingController();
@@ -93,12 +93,14 @@ class _JoinScreenState extends State<JoinScreen> {
     });
 
     try {
-      ScaffoldMessengerState scaffoldMessengerState = ScaffoldMessenger.of(context);
+      ScaffoldMessengerState scaffoldMessengerState =
+          ScaffoldMessenger.of(context);
       GoRouter goRouter = GoRouter.of(context);
 
       await Future.delayed(const Duration(seconds: 2));
 
-      scaffoldMessengerState.showSnackBar(const SnackBar(content: Text('회원가입이 완료되었습니다.')));
+      scaffoldMessengerState
+          .showSnackBar(const SnackBar(content: Text('회원가입이 완료되었습니다.')));
       goRouter.go('/login');
     } finally {
       setState(() {
@@ -124,7 +126,8 @@ class _JoinScreenState extends State<JoinScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Theme(
-              data: ThemeData(colorScheme: const ColorScheme.light(primary: Colors.red)),
+              data: ThemeData(
+                  colorScheme: const ColorScheme.light(primary: Colors.red)),
               child: Center(
                 child: Stepper(
                   currentStep: _currentStep,
@@ -145,7 +148,8 @@ class _JoinScreenState extends State<JoinScreen> {
                     }
                   },
                   steps: _steps(),
-                  controlsBuilder: (BuildContext context, ControlsDetails details) {
+                  controlsBuilder:
+                      (BuildContext context, ControlsDetails details) {
                     return Column(
                       children: [
                         const SizedBox(height: 10),
