@@ -65,4 +65,10 @@ class RoomViewModel extends ChangeNotifier {
     await _roomManager.updateReserveYn(roomId, reserveYn, updatedAt);
     getRooms();
   }
+
+  Future<void> removeRoom(int roomId) async {
+    await _roomManager.deleteRoom(roomId);
+    _rooms.removeWhere((room) => room.id == roomId);
+    notifyListeners();
+  }
 }

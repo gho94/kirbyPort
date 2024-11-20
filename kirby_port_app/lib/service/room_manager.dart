@@ -4,7 +4,9 @@ import 'package:sqflite/sqflite.dart';
 
 class RoomManager {
   static final RoomManager _instance = RoomManager._internal();
+
   factory RoomManager() => _instance;
+
   RoomManager._internal();
 
   late Database _database;
@@ -65,7 +67,8 @@ class RoomManager {
     );
   }
 
-  Future<void> updateReserveYn(int roomId, String reserveYn, String updatedAt) async {
+  Future<void> updateReserveYn(int roomId, String reserveYn,
+      String updatedAt) async {
     final db = await database;
 
     await db.update(
@@ -77,5 +80,21 @@ class RoomManager {
       where: "id = ?",
       whereArgs: [roomId],
     );
+  }
+
+  Future<void> deleteRoom(int roomId) async {
+    final db = await _database;
+
+    int result = await db.delete(
+      'room',
+      where: 'id = ?',
+      whereArgs: [roomId],
+    );
+
+    if (result == 0) {
+      print('Room with ID $roomId 못찾음.');
+    } else {
+      print('Room with ID $roomId 삭제성공.');
+    }
   }
 }
