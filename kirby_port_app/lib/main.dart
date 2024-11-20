@@ -3,9 +3,9 @@ import 'package:kirby_port_app/route.dart';
 import 'package:kirby_port_app/service/local_notification_manager.dart';
 import 'package:kirby_port_app/view_model/room_view_model.dart';
 import 'package:kirby_port_app/view_model/topic_view_model.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/data/latest.dart' as tz;
-import 'package:permission_handler/permission_handler.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,11 +29,18 @@ class MyApp extends StatelessWidget {
         routerConfig: router,
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
+          useMaterial3: true,
+          brightness: Brightness.light,
+        ),
+        darkTheme: ThemeData(
+          useMaterial3: true,
           appBarTheme: AppBarTheme(backgroundColor: Colors.grey[900]),
           scaffoldBackgroundColor: Colors.grey[900],
           bottomNavigationBarTheme: const BottomNavigationBarThemeData(
               backgroundColor: Colors.black26, selectedItemColor: Colors.red),
+          brightness: Brightness.dark,
         ),
+        themeMode: ThemeMode.dark,
       ),
     );
   }
