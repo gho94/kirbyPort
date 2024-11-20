@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:kirby_port_app/screen/chat_screen.dart';
 import 'package:kirby_port_app/screen/create_room_screen.dart';
 import 'package:kirby_port_app/screen/home_screen.dart';
-import 'package:kirby_port_app/screen/join_screen.dart';
+import 'package:kirby_port_app/screen/signup_screen.dart';
 import 'package:kirby_port_app/screen/login_screen.dart';
 import 'package:kirby_port_app/screen/my_room_screen.dart';
 import 'package:kirby_port_app/screen/room_list_screen.dart';
@@ -12,18 +12,18 @@ import 'package:kirby_port_app/screen/topic_filter_screen.dart';
 GoRouter get router => _router;
 
 final GoRouter _router = GoRouter(
-  initialLocation: '/login',
+  initialLocation: '/',
   routes: <RouteBase>[
     GoRoute(
-      path: '/login',
+      path: '/',
       builder: (BuildContext context, GoRouterState state) {
         return const LoginScreen();
       },
       routes: <RouteBase>[
         GoRoute(
-          path: "join",
+          path: "signup",
           builder: (BuildContext context, GoRouterState state) {
-            return const JoinScreen();
+            return const SignUpScreen();
           },
         ),
       ],
