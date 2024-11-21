@@ -5,21 +5,50 @@ import 'package:kirby_port_app/model/room_model.dart';
 import 'package:kirby_port_app/view_model/room_view_model.dart';
 import 'package:provider/provider.dart';
 import '../service/local_notification_manager.dart';
+import 'dart:async';
 
-class RoomItem extends StatelessWidget {
+class RoomItem extends StatefulWidget {
   final Room room;
   final String topicName;
 
   const RoomItem({super.key, required this.room, required this.topicName});
 
   @override
+  State<RoomItem> createState() => _RoomItemState();
+}
+
+class _RoomItemState extends State<RoomItem> {
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _startTimer();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  // Timer 초기화
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Dismissible(
-      key: Key(room.id.toString()),
+      key: Key(widget.room.id.toString()),
       direction: DismissDirection.horizontal,
       onDismissed: (direction) {
         _deleteRoom(context);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${room.name} 삭제됨')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${widget.room.name} 삭제됨')));
       },
       background: _buildSwipeBackground(Colors.red),
       secondaryBackground: _buildSwipeBackground(Colors.red),
@@ -50,63 +79,60 @@ class RoomItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      topicName,
+                      '#${widget.topicName}',
                       style: const TextStyle(fontSize: 13),
                     ),
                     Text(
-                      room.name,
-                      style: const TextStyle(fontSize: 23),
+                      widget.room.name,
+                      style: const TextStyle(fontSize: 25),
                     ),
                     const SizedBox(height: 5),
                     Text(
-                      "Start: ${room.startTime}",
-                      style: const TextStyle(fontSize: 12),
+                      " ${DateFormat('yyyy-MM-dd HH:mm').format(DateTime.parse(widget.room.startTime))}", // 초 없앰
+                      style: const TextStyle(fontSize: 11),
                     ),
                     Text(
-                      "End: ${room.endTime}",
-                      style: const TextStyle(fontSize: 12), //사이즈변경
+                      "  ~  ${DateFormat('yyyy-MM-dd HH:mm').format(DateTime.parse(widget.room.endTime))}", //초 없앰
+                      style: const TextStyle(fontSize: 11),
                     ),
                   ],
                 ),
                 Center(
                   child: Row(
                     children: [
-                      if (room.reserveYn == "N")
+                      if (widget.room.reserveYn == "N")
                         IconButton(
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.notifications,
-                            color: Colors.red[900],
+                            color: Colors.grey,
                           ),
                           onPressed: () {
                             _updateReserveYn(context, "Y");
-                            LocalNotificationManager.showInstanceNotification(room.name, "예약 성공", room.id!);
-                            DateTime startTime = DateTime.parse(room.startTime);
-                            LocalNotificationManager.scheduleNotification(room.name, "방이 오픈 되었커비 ", startTime, room.id!);
+                            LocalNotificationManager.showInstanceNotification(widget.room.name, "예약 성공", widget.room.id!);
+                            DateTime startTime = DateTime.parse(widget.room.startTime);
+                            LocalNotificationManager.scheduleNotification(widget.room.name, "방이 오픈 되었커비 ", startTime, widget.room.id!);
                           },
                         )
-                      else ...[
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.red[700], minimumSize: const Size(20, 40)),
-                          onPressed: () => context.push("/home/list"),
-                          child: const Text(
-                            "참여",
-                            style: TextStyle(color: Colors.white), //보라색
+                      else if (DateTime.now().isAfter(DateTime.parse(widget.room.startTime)) && widget.room.reserveYn == "Y")
+                        IconButton(
+                          icon: const Icon(
+                            Icons.door_front_door_outlined,
+                            color: Colors.red,
                           ),
-                        ),
-                        const SizedBox(width: 10),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.grey, minimumSize: const Size(20, 40)),
+                          onPressed: () {
+                            context.push('/home/list');
+                          },
+                        )
+                      else if (widget.room.reserveYn == "Y")
+                        IconButton(
+                          icon: const Icon(
+                            Icons.notifications_active,
+                            color: Colors.red,
+                          ),
                           onPressed: () {
                             _updateReserveYn(context, "N");
-                            LocalNotificationManager.cancelNotification(room.id!);
-                            LocalNotificationManager.showInstanceNotification(room.name, "예약 취소", room.id!);
                           },
-                          child: const Text(
-                            "취소",
-                            style: TextStyle(color: Colors.black),
-                          ),
-                        ),
-                      ]
+                        )
                     ],
                   ),
                 )
@@ -121,7 +147,7 @@ class RoomItem extends StatelessWidget {
   void _updateReserveYn(BuildContext context, String reserveYn) {
     final roomViewModel = Provider.of<RoomViewModel>(context, listen: false);
     roomViewModel.updateReserveYn(
-      roomId: room.id!,
+      roomId: widget.room.id!,
       reserveYn: reserveYn,
       updatedAt: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
     );
@@ -129,7 +155,7 @@ class RoomItem extends StatelessWidget {
 
   void _deleteRoom(BuildContext context) {
     final roomViewModel = Provider.of<RoomViewModel>(context, listen: false);
-    roomViewModel.removeRoom(room.id!);
+    roomViewModel.removeRoom(widget.room.id!);
   }
 
   Widget _buildSwipeBackground(Color color) {
