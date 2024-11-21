@@ -5,22 +5,51 @@ import 'package:kirby_port_app/model/room_model.dart';
 import 'package:kirby_port_app/view_model/room_view_model.dart';
 import 'package:provider/provider.dart';
 import '../service/local_notification_manager.dart';
+import 'dart:async';
 
-class RoomItem extends StatelessWidget {
+class RoomItem extends StatefulWidget {
   final Room room;
   final String topicName;
 
   const RoomItem({super.key, required this.room, required this.topicName});
 
   @override
+  State<RoomItem> createState() => _RoomItemState();
+}
+
+class _RoomItemState extends State<RoomItem> {
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _startTimer();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  // Timer 초기화
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Dismissible(
-      key: Key(room.id.toString()),
+      key: Key(widget.room.id.toString()),
       direction: DismissDirection.horizontal,
       onDismissed: (direction) {
         _deleteRoom(context);
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('${room.name} 삭제됨')));
+            .showSnackBar(SnackBar(content: Text('${widget.room.name} 삭제됨')));
       },
       background: _buildSwipeBackground(Colors.red),
       secondaryBackground: _buildSwipeBackground(Colors.red),
@@ -49,20 +78,20 @@ class RoomItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    topicName,
+                    widget.topicName,
                     style: const TextStyle(fontSize: 13),
                   ),
                   Text(
-                    room.name,
+                    widget.room.name,
                     style: const TextStyle(fontSize: 23),
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    "Start: ${room.startTime}",
+                    "Start: ${widget.room.startTime}",
                     style: const TextStyle(fontSize: 12),
                   ),
                   Text(
-                    "End: ${room.endTime}",
+                    "End: ${widget.room.endTime}",
                     style: const TextStyle(fontSize: 12), //사이즈변경
                   ),
                 ],
@@ -70,7 +99,7 @@ class RoomItem extends StatelessWidget {
               Center(
                 child: Row(
                   children: [
-                    if (room.reserveYn == "N")
+                    if (widget.room.reserveYn == "N")
                       IconButton(
                         icon: Icon(
                           Icons.notifications,
@@ -79,10 +108,10 @@ class RoomItem extends StatelessWidget {
                         onPressed: () {
                           _updateReserveYn(context, "Y");
                           LocalNotificationManager.showInstanceNotification(
-                              room.name, "예약 성공", room.id!);
-                          DateTime startTime = DateTime.parse(room.startTime);
+                              widget.room.name, "예약 성공", widget.room.id!);
+                          DateTime startTime = DateTime.parse(widget.room.startTime);
                           LocalNotificationManager.scheduleNotification(
-                              room.name, "방이 오픈 되었커비 ", startTime, room.id!);
+                              widget.room.name, "방이 오픈 되었커비 ", startTime, widget.room.id!);
                         },
                       )
                     else ...[
@@ -103,9 +132,9 @@ class RoomItem extends StatelessWidget {
                             minimumSize: const Size(20, 40)),
                         onPressed: () {
                           _updateReserveYn(context, "N");
-                          LocalNotificationManager.cancelNotification(room.id!);
+                          LocalNotificationManager.cancelNotification(widget.room.id!);
                           LocalNotificationManager.showInstanceNotification(
-                              room.name, "예약 취소", room.id!);
+                              widget.room.name, "예약 취소", widget.room.id!);
                         },
                         child: const Text(
                           "취소",
@@ -126,7 +155,7 @@ class RoomItem extends StatelessWidget {
   void _updateReserveYn(BuildContext context, String reserveYn) {
     final roomViewModel = Provider.of<RoomViewModel>(context, listen: false);
     roomViewModel.updateReserveYn(
-      roomId: room.id!,
+      roomId: widget.room.id!,
       reserveYn: reserveYn,
       updatedAt: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
     );
@@ -134,7 +163,7 @@ class RoomItem extends StatelessWidget {
 
   void _deleteRoom(BuildContext context) {
     final roomViewModel = Provider.of<RoomViewModel>(context, listen: false);
-    roomViewModel.removeRoom(room.id!);
+    roomViewModel.removeRoom(widget.room.id!);
   }
 
   Widget _buildSwipeBackground(Color color) {
