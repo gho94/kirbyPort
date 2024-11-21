@@ -31,12 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "KriBy - Port",
-          style: TextStyle(
-            color: Colors.white,
-          ),
-        ),
+        title: const Text("KriBy - Port"),
         centerTitle: true,
         actions: [
           IconButton(

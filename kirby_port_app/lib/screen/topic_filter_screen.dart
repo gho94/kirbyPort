@@ -18,11 +18,20 @@ class TopicFilterScreen extends StatelessWidget {
           appBar: AppBar(
             title: const Text("주제별 필터"),
             centerTitle: true,
-            foregroundColor: Colors.white,
+            leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: const Icon(Icons.arrow_back_ios_new_outlined),
+              color: Colors.red[900],
+            ),
             actions: [
               IconButton(
                 onPressed: () => Navigator.pop(context),
-                icon: const Icon(Icons.check),
+                icon: const Icon(
+                  Icons.check,
+                  color: Colors.red,
+                ),
               ),
             ],
           ),
@@ -33,13 +42,11 @@ class TopicFilterScreen extends StatelessWidget {
               runSpacing: 20.0,
               children: topicViewModel.topics.map((topic) {
                 return GestureDetector(
-                  onLongPress: () =>
-                      _showConfirmationDialog(context, topic, topicViewModel),
+                  onLongPress: () => _showConfirmationDialog(context, topic, topicViewModel),
                   onTap: () => topicViewModel.toggleTopicSelection(topic.id!),
                   child: TopicContainer(
                     text: topic.name,
-                    isSelected:
-                        topicViewModel.selectedTopicIds.contains(topic.id),
+                    isSelected: topicViewModel.selectedTopicIds.contains(topic.id),
                   ),
                 );
               }).toList(),
@@ -56,8 +63,8 @@ class TopicFilterScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: TextField(
+                          cursorColor: Colors.white,
                           controller: textController,
-                          style: const TextStyle(color: Colors.white),
                           decoration: InputDecoration(
                             suffixIcon: IconButton(
                               onPressed: () {
@@ -99,17 +106,15 @@ class TopicFilterScreen extends StatelessWidget {
   }
 }
 
-void _showConfirmationDialog(
-    BuildContext context, Topic topic, TopicViewModel topicViewModel) {
+void _showConfirmationDialog(BuildContext context, Topic topic, TopicViewModel topicViewModel) {
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.white.withOpacity(0.15),
       title: Text(
         "정말 삭제 하시겠습니까?",
         style: TextStyle(
           color: Colors.red[900],
-          fontWeight: FontWeight.bold,
         ),
       ),
       actions: [
@@ -129,7 +134,6 @@ void _showConfirmationDialog(
               SnackBar(
                 content: Text(
                   "'${topic.name}' 토픽이 삭제되었습니다.",
-                  style: const TextStyle(color: Colors.white),
                 ),
                 backgroundColor: Colors.red,
                 duration: const Duration(seconds: 2),
