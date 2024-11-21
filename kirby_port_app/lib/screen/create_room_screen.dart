@@ -186,17 +186,26 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
     );
 
     if (!mounted) return;
+    if (selectedDate == null) {
+      // 달력 다이얼로그 취소해도 시간으로 넘어가서 수정
+      return;
+    }
     final selectedTime = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.fromDateTime(_selectedDateTime ?? DateTime.now()),
     );
 
+    if (selectedTime == null) {
+      // 시간 다이얼로그 취소시 오류나서 수정
+      return;
+    }
+
     setState(() {
       _selectedDateTime = DateTime(
-        selectedDate!.year,
+        selectedDate.year,
         selectedDate.month,
         selectedDate.day,
-        selectedTime!.hour,
+        selectedTime.hour,
         selectedTime.minute,
       );
       validActionEnable();

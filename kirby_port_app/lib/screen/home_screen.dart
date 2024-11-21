@@ -50,13 +50,16 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: () => context.push("/home/create-room")),
         ],
       ),
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: _onPageChanged,
-        children: const [
-          RoomListScreen(),
-          MyRoomScreen(),
-        ],
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: PageView(
+          controller: _pageController,
+          onPageChanged: _onPageChanged,
+          children: const [
+            RoomListScreen(),
+            MyRoomScreen(),
+          ],
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
