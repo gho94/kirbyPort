@@ -113,9 +113,7 @@ void _showConfirmationDialog(BuildContext context, Topic topic, TopicViewModel t
       backgroundColor: Colors.white.withOpacity(0.15),
       title: Text(
         "정말 삭제 하시겠습니까?",
-        style: TextStyle(
-          color: Colors.red[900],
-        ),
+        style: TextStyle(color: Colors.red[900], fontWeight: FontWeight.bold),
       ),
       actions: [
         TextButton(
