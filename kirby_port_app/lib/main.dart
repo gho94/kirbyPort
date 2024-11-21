@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kirby_port_app/route.dart';
 import 'package:kirby_port_app/service/local_notification_manager.dart';
+import 'package:kirby_port_app/view_model/chat_view_model.dart';
 import 'package:kirby_port_app/view_model/room_view_model.dart';
 import 'package:kirby_port_app/view_model/topic_view_model.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -9,10 +10,20 @@ import 'package:timezone/data/latest.dart' as tz;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Permission.notification.request();
+  await _handleNotificationPermission();
   await LocalNotificationManager.init();
   tz.initializeTimeZones();
   runApp(const MyApp());
+}
+
+Future<void> _handleNotificationPermission() async {
+  var permissionStatus = await Permission.notification.status;
+  if (!permissionStatus.isGranted) {
+    bool isGranted = await Permission.notification.request().isGranted;
+    if (!isGranted) {
+      await openAppSettings();
+    }
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -24,6 +35,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => RoomViewModel()),
         ChangeNotifierProvider(create: (context) => TopicViewModel()),
+        ChangeNotifierProvider(create: (context) => ChatViewModel()),
       ],
       child: MaterialApp.router(
         routerConfig: router,

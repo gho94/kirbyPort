@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import '../service/device_info_manager.dart';
+import 'package:kirby_port_app/view_model/chat_view_model.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -9,6 +12,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _nicknameController = TextEditingController();
+  final DeviceInfoManager deviceInfoManager = DeviceInfoManager();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,7 +27,8 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               //제목, IDPW, 버튼
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.25),
+                padding: EdgeInsets.symmetric(
+                    horizontal: MediaQuery.of(context).size.width * 0.24),
                 child: Form(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -45,11 +52,17 @@ class _LoginScreenState extends State<LoginScreen> {
                             children: [
                               Text(
                                 'KirBy',
-                                style: TextStyle(fontSize: 31, fontWeight: FontWeight.w900, color: Colors.red[900]),
+                                style: TextStyle(
+                                    fontSize: 31,
+                                    fontWeight: FontWeight.w900,
+                                    color: Colors.red[900]),
                               ),
                               Text(
                                 'Port',
-                                style: TextStyle(fontSize: 31, fontWeight: FontWeight.w900, color: Colors.red[900]),
+                                style: TextStyle(
+                                    fontSize: 31,
+                                    fontWeight: FontWeight.w900,
+                                    color: Colors.red[900]),
                               ),
                             ],
                           ),
@@ -61,65 +74,32 @@ class _LoginScreenState extends State<LoginScreen> {
                       SizedBox(
                         height: 45,
                         child: TextFormField(
+                          controller: _nicknameController,
                           validator: (value) {
                             if (value!.isEmpty) {
-                              return '이메일을 입력해주세요.';
+                              return '닉네임을 입력해주세요.';
                             }
                             return null;
                           },
-                          decoration: InputDecoration(
-                            border: const OutlineInputBorder(),
-                            labelText: "E-mail",
-                            labelStyle: TextStyle(color: Colors.red.withOpacity(0.6)),
-                            enabledBorder: const OutlineInputBorder(
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: "Nickname",
+                            enabledBorder: OutlineInputBorder(
                               borderSide: BorderSide(
                                 color: Color.fromARGB(255, 158, 158, 158),
                                 width: 1.5,
                               ),
                             ),
-                            focusedBorder: const OutlineInputBorder(
+                            focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(
                                 color: Colors.red,
                                 width: 1.5,
                               ),
                             ),
                             filled: true,
+                            fillColor: Colors.white,
                           ),
                           keyboardType: TextInputType.emailAddress,
-                          cursorColor: Colors.white, //커서 색상
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      SizedBox(
-                        height: 45,
-                        child: TextFormField(
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return '비밀번호를 입력해주세요.';
-                            }
-
-                            return null;
-                          },
-                          decoration: InputDecoration(
-                            border: const OutlineInputBorder(),
-                            labelText: "Password",
-                            labelStyle: TextStyle(color: Colors.red.withOpacity(0.6)),
-                            enabledBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Color.fromARGB(255, 158, 158, 158),
-                                width: 1.5,
-                              ),
-                            ),
-                            focusedBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.red,
-                                width: 1.5,
-                              ),
-                            ),
-                            filled: true,
-                          ),
-                          obscureText: true,
-                          cursorColor: Colors.white, //커서 색상
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -130,10 +110,24 @@ class _LoginScreenState extends State<LoginScreen> {
                         height: 40,
                         child: ElevatedButton(
                           onPressed: () {
-                            context.go('/home');
+                            String nickname = _nicknameController.text.trim();
+                            if (nickname.isNotEmpty) {
+                              final chatViewModel = Provider.of<ChatViewModel>(
+                                  context,
+                                  listen: false);
+                              chatViewModel.setUsers(nickname);
+                              context.go('/home');
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('닉네임을 입력해주세요!')),
+                              );
+                            }
                           },
-                          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xfff44336)),
-                          child: const Text('Login', style: TextStyle(color: Color(0xFFFfffff), fontSize: 20)),
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xfff44336)),
+                          child: const Text('Login',
+                              style: TextStyle(
+                                  color: Color(0xFFFfffff), fontSize: 20)),
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -145,7 +139,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             },
                             child: Text(
                               'Join Us',
-                              style: TextStyle(color: Colors.red[900], fontSize: 16),
+                              style: TextStyle(
+                                  color: Colors.red[900], fontSize: 16),
                             )),
                       ),
                       const SizedBox(height: 30),
@@ -176,7 +171,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   //채팅방 목록
                   Container(
-                    margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10.0),
+                    margin: const EdgeInsets.symmetric(
+                        vertical: 10, horizontal: 10.0),
                     decoration: BoxDecoration(
                       color: Colors.black,
                       border: Border.all(width: 0.5, color: Colors.red),
@@ -199,40 +195,48 @@ class _LoginScreenState extends State<LoginScreen> {
                             children: [
                               Text(
                                 '#액션, #스릴러',
-                                style: TextStyle(fontSize: 13),
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 13),
                               ),
                               Text(
                                 '오징어게임 2',
-                                style: TextStyle(fontSize: 20),
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 20),
                               ),
                               SizedBox(height: 5),
                               Text(
                                 "Start: 2024-12-01 20:30",
-                                style: TextStyle(fontSize: 12),
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 12),
                               ),
                               Text(
                                 "Start: 2024-12-01 23:00",
-                                style: TextStyle(fontSize: 12),
+                                style:
+                                    TextStyle(color: Colors.white, fontSize: 1),
                               ),
                             ],
                           ),
                           Row(
                             children: [
                               ElevatedButton(
-                                style: ElevatedButton.styleFrom(backgroundColor: Colors.red[700], minimumSize: const Size(20, 40)),
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red[700],
+                                    minimumSize: const Size(20, 40)),
                                 onPressed: () => context.push('/'),
                                 child: const Text(
                                   "참여",
-                                  style: TextStyle(color: Colors.white), //보라색 됨
+                                  style: TextStyle(color: Colors.white),
                                 ),
                               ),
                               const SizedBox(width: 10),
                               ElevatedButton(
                                 onPressed: () => context.push('/'),
-                                style: ElevatedButton.styleFrom(backgroundColor: Colors.grey, minimumSize: const Size(20, 40)),
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.grey,
+                                    minimumSize: const Size(20, 40)),
                                 child: const Text(
                                   "취소",
-                                  style: TextStyle(color: Colors.white), //보라색 됨
+                                  style: TextStyle(color: Colors.white),
                                 ),
                               ),
                             ],
@@ -242,7 +246,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   Container(
-                    margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10.0),
+                    margin: const EdgeInsets.symmetric(
+                        vertical: 10, horizontal: 10.0),
                     decoration: BoxDecoration(
                       color: Colors.black,
                       // border: Border.all(width: 0.5, color: Colors.red),
@@ -265,40 +270,48 @@ class _LoginScreenState extends State<LoginScreen> {
                             children: [
                               Text(
                                 '#액션, #스릴러',
-                                style: TextStyle(fontSize: 13),
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 13),
                               ),
                               Text(
                                 '오징어게임 1',
-                                style: TextStyle(fontSize: 20),
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 20),
                               ),
                               SizedBox(height: 5),
                               Text(
                                 "Start: 2024-12-01 20:30",
-                                style: TextStyle(fontSize: 12),
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 12),
                               ),
                               Text(
                                 "Start: 2024-12-01 23:00",
-                                style: TextStyle(fontSize: 12),
+                                style:
+                                    TextStyle(color: Colors.white, fontSize: 1),
                               ),
                             ],
                           ),
                           Row(
                             children: [
                               ElevatedButton(
-                                style: ElevatedButton.styleFrom(backgroundColor: Colors.red[700], minimumSize: const Size(20, 40)),
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red[700],
+                                    minimumSize: const Size(20, 40)),
                                 onPressed: () => context.push('/'),
                                 child: const Text(
                                   "참여",
-                                  style: TextStyle(color: Colors.white), //보라색 됨
+                                  style: TextStyle(color: Colors.white),
                                 ),
                               ),
                               const SizedBox(width: 10),
                               ElevatedButton(
                                 onPressed: () => context.push('/'),
-                                style: ElevatedButton.styleFrom(backgroundColor: Colors.grey, minimumSize: const Size(20, 40)),
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.grey,
+                                    minimumSize: const Size(20, 40)),
                                 child: const Text(
                                   "취소",
-                                  style: TextStyle(color: Colors.white), //보라색 됨
+                                  style: TextStyle(color: Colors.white),
                                 ),
                               ),
                             ],
@@ -314,10 +327,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
           //검은색 아래쪽 채우는 그라데이션
           Positioned(
-            bottom: 0, // 화면의 바닥에 배치
+            bottom: 0,
+            // 화면의 바닥에 배치
             left: 0,
             right: 0,
-            height: 30, // 검은색 영역의 높이
+            height: 30,
+            // 검은색 영역의 높이
             child: Container(
               color: Colors.black, // 검은색
             ),
@@ -325,10 +340,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
           // 검은색 위에서부터 시작하는 그라데이션
           Positioned(
-            bottom: 30, // 검은색 위에서부터 시작
+            bottom: 30,
+            // 검은색 위에서부터 시작
             left: 0,
             right: 0,
-            height: 80, // 그라데이션 높이
+            height: 80,
+            // 그라데이션 높이
             child: Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(

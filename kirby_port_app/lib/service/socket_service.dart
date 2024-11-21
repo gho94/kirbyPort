@@ -4,7 +4,7 @@ class SocketService {
   late IO.Socket socket;
 
   void initializeSocket(
-      String url, String? selectedUserName, Function onMessageReceived) {
+      String url, String? nickname, Function onMessageReceived) {
     socket = IO.io(
       url,
       IO.OptionBuilder()
@@ -17,8 +17,8 @@ class SocketService {
 
     // 서버와 연결되었을 때 사용자 이름 등록
     socket.onConnect((_) {
-      if (selectedUserName != null) {
-        socket.emit('register', selectedUserName); // 사용자 이름 전송
+      if (nickname != null) {
+        socket.emit('register', nickname); // 사용자 이름 전송
       }
     });
 

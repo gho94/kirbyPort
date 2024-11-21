@@ -19,99 +19,104 @@ class RoomItem extends StatelessWidget {
       direction: DismissDirection.horizontal,
       onDismissed: (direction) {
         _deleteRoom(context);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${room.name} 삭제됨')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('${room.name} 삭제됨')));
       },
       background: _buildSwipeBackground(Colors.red),
       secondaryBackground: _buildSwipeBackground(Colors.red),
-      child: GestureDetector(
-        onTap: () {},
-        child: Container(
-          margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10.0),
-          decoration: BoxDecoration(
-            color: Colors.black,
-            border: Border.all(
-              width: 0.5,
-            ),
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.8),
-                blurRadius: 5,
-                offset: const Offset(2, 4),
-              ),
-            ],
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+        decoration: BoxDecoration(
+          color: Colors.black,
+          border: Border.all(
+            width: 0.5,
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.8),
+              blurRadius: 5,
+              offset: const Offset(2, 4),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    topicName,
+                    style: const TextStyle(fontSize: 13),
+                  ),
+                  Text(
+                    room.name,
+                    style: const TextStyle(fontSize: 23),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    "Start: ${room.startTime}",
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                  Text(
+                    "End: ${room.endTime}",
+                    style: const TextStyle(fontSize: 12), //사이즈변경
+                  ),
+                ],
+              ),
+              Center(
+                child: Row(
                   children: [
-                    Text(
-                      topicName,
-                      style: const TextStyle(fontSize: 13),
-                    ),
-                    Text(
-                      room.name,
-                      style: const TextStyle(fontSize: 23),
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      "Start: ${room.startTime}",
-                      style: const TextStyle(fontSize: 12),
-                    ),
-                    Text(
-                      "End: ${room.endTime}",
-                      style: const TextStyle(fontSize: 12), //사이즈변경
-                    ),
+                    if (room.reserveYn == "N")
+                      IconButton(
+                        icon: Icon(
+                          Icons.notifications,
+                          color: Colors.red[900],
+                        ),
+                        onPressed: () {
+                          _updateReserveYn(context, "Y");
+                          LocalNotificationManager.showInstanceNotification(
+                              room.name, "예약 성공", room.id!);
+                          DateTime startTime = DateTime.parse(room.startTime);
+                          LocalNotificationManager.scheduleNotification(
+                              room.name, "방이 오픈 되었커비 ", startTime, room.id!);
+                        },
+                      )
+                    else ...[
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red[700],
+                            minimumSize: const Size(20, 40)),
+                        onPressed: () => context.push("/home/list"),
+                        child: const Text(
+                          "참여",
+                          style: TextStyle(color: Colors.white), //보라색
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.grey,
+                            minimumSize: const Size(20, 40)),
+                        onPressed: () {
+                          _updateReserveYn(context, "N");
+                          LocalNotificationManager.cancelNotification(room.id!);
+                          LocalNotificationManager.showInstanceNotification(
+                              room.name, "예약 취소", room.id!);
+                        },
+                        child: const Text(
+                          "취소",
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    ]
                   ],
                 ),
-                Center(
-                  child: Row(
-                    children: [
-                      if (room.reserveYn == "N")
-                        IconButton(
-                          icon: Icon(
-                            Icons.notifications,
-                            color: Colors.red[900],
-                          ),
-                          onPressed: () {
-                            _updateReserveYn(context, "Y");
-                            LocalNotificationManager.showInstanceNotification(room.name, "예약 성공", room.id!);
-                            DateTime startTime = DateTime.parse(room.startTime);
-                            LocalNotificationManager.scheduleNotification(room.name, "방이 오픈 되었커비 ", startTime, room.id!);
-                          },
-                        )
-                      else ...[
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.red[700], minimumSize: const Size(20, 40)),
-                          onPressed: () => context.push("/home/list"),
-                          child: const Text(
-                            "참여",
-                            style: TextStyle(color: Colors.white), //보라색
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.grey, minimumSize: const Size(20, 40)),
-                          onPressed: () {
-                            _updateReserveYn(context, "N");
-                            LocalNotificationManager.cancelNotification(room.id!);
-                            LocalNotificationManager.showInstanceNotification(room.name, "예약 취소", room.id!);
-                          },
-                          child: const Text(
-                            "취소",
-                            style: TextStyle(color: Colors.black),
-                          ),
-                        ),
-                      ]
-                    ],
-                  ),
-                )
-              ],
-            ),
+              )
+            ],
           ),
         ),
       ),

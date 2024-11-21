@@ -2,54 +2,62 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:kirby_port_app/component/animated_heart.dart';
 import 'package:kirby_port_app/service/socket_service.dart';
+import '../service/device_info_manager.dart';
 
-class ChatViewModel {
+class ChatViewModel with ChangeNotifier {
   final SocketService socketService = SocketService();
   final TextEditingController messageController = TextEditingController();
   final ScrollController scrollController = ScrollController();
   final ValueNotifier<List<Map<String, dynamic>>> messagesNotifier =
       ValueNotifier<List<Map<String, dynamic>>>([]);
   final ValueNotifier<List<Widget>> heartsNotifier = ValueNotifier([]);
+  final DeviceInfoManager deviceInfoManager = DeviceInfoManager();
 
-  final List<Map<String, String>> users = [
-    {'userId': 'user1', 'name': 'Elice'},
-    {'userId': 'user2', 'name': 'Bob'},
-    {'userId': 'user3', 'name': 'Charlie'},
-    {'userId': 'user4', 'name': 'Diana'},
-  ];
+  String? nickname;
+  String? deviceId;
+  String? get getNickname => nickname;
+  String? get getDeviceId => deviceId;
+  bool _isInitialized = false;
 
-  String? selectedUserId;
-  String? selectedUserName;
-
-  void initialize(String url) {
-    socketService.initializeSocket(
-      url,
-      selectedUserName,
-      (data) {
-        final isMine = data['senderId'] == socketService.socket.id;
-        messagesNotifier.value = [
-          ...messagesNotifier.value,
-          {
-            'text': data['message'],
-            'isMine': isMine,
-            'senderName': data['senderName'],
-          }
-        ];
-        scrollToBottom();
-      },
-    );
+  void setUsers(String nickname) {
+    this.nickname = nickname;
+    notifyListeners();
   }
 
-  void registerUser() {
-    if (selectedUserName != null) {
-      socketService.socket.emit('register', selectedUserName);
+  Future<void> initializeUsers(String nickname) async {
+    if (!_isInitialized) {
+      deviceId = await deviceInfoManager.getDeviceId();
+      this.nickname = nickname;
+      _isInitialized = true;
+      notifyListeners();
     }
   }
 
-  void sendMessage() {
+  void initialize(String url) {
+    if (!_isInitialized) {
+      socketService.initializeSocket(
+        url,
+        nickname,
+        (data) {
+          final isMine = data['senderId'] == socketService.socket.id;
+          messagesNotifier.value = [
+            ...messagesNotifier.value,
+            {
+              'text': data['message'],
+              'isMine': isMine,
+              'senderName': data['senderName'],
+            }
+          ];
+          scrollToBottom();
+        },
+      );
+    }
+  }
+
+  void sendMessage(String deviceId, String nickname) {
     final text = messageController.text.trim();
     if (text.isNotEmpty) {
-      socketService.sendMessage(text, selectedUserId, selectedUserName);
+      socketService.sendMessage(text, deviceId, nickname);
       messageController.clear();
     }
   }
@@ -94,7 +102,9 @@ class ChatViewModel {
     );
   }
 
+  @override
   void dispose() {
+    super.dispose();
     socketService.dispose();
     messageController.dispose();
     scrollController.dispose();

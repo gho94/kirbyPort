@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kirby_port_app/view_model/chat_view_model.dart';
+import 'package:provider/provider.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -9,54 +10,27 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  final viewModel = ChatViewModel();
+  late final ChatViewModel chatViewModel;
 
   @override
   void initState() {
     super.initState();
-    viewModel.initialize('http://192.168.35.15:3000');
+    chatViewModel = Provider.of<ChatViewModel>(context, listen: false);
+    String nickname = chatViewModel.getNickname ?? "default";
+    chatViewModel.initializeUsers(nickname);
+    chatViewModel.initialize('http://192.168.200.151:3000');
   }
 
   @override
   void dispose() {
-    viewModel.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // 이름 선택 화면
-    if (viewModel.selectedUserId == null) {
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text('사용자 선택'),
-          backgroundColor: Colors.grey.shade700,
-        ),
-        body: ListView.builder(
-          itemCount: viewModel.users.length,
-          itemBuilder: (context, index) {
-            final user = viewModel.users[index];
-            return ListTile(
-              title: Text(
-                user['name']!,
-                style: const TextStyle(fontSize: 18),
-              ),
-              onTap: () {
-                setState(() {
-                  viewModel.selectedUserId = user['userId'];
-                  viewModel.selectedUserName = user['name'];
-                });
-                viewModel.registerUser(); // 사용자 등록
-              },
-            );
-          },
-        ),
-      );
-    }
-
     // 채팅 화면
     return ValueListenableBuilder<List<Map<String, dynamic>>>(
-      valueListenable: viewModel.messagesNotifier,
+      valueListenable: chatViewModel.messagesNotifier,
       builder: (context, messages, _) {
         return Scaffold(
           backgroundColor: Colors.grey.shade900,
@@ -73,7 +47,8 @@ class _ChatScreenState extends State<ChatScreen> {
               Padding(
                 padding: const EdgeInsets.only(right: 8.0),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                   decoration: BoxDecoration(
                     color: Colors.red,
                     borderRadius: BorderRadius.circular(12),
@@ -105,20 +80,26 @@ class _ChatScreenState extends State<ChatScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ListView.builder(
-                          controller: viewModel.scrollController,
+                          controller: chatViewModel.scrollController,
                           itemCount: messages.length,
                           itemBuilder: (context, index) {
                             final message = messages[index];
                             final isMine = message['isMine'] as bool;
-                            final senderName = message['senderName'] ?? "Unknown";
+                            final senderName =
+                                message['senderName'] ?? "Unknown";
                             return Align(
-                              alignment: isMine ? Alignment.centerRight : Alignment.centerLeft,
+                              alignment: isMine
+                                  ? Alignment.centerRight
+                                  : Alignment.centerLeft,
                               child: Column(
-                                crossAxisAlignment: isMine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                                crossAxisAlignment: isMine
+                                    ? CrossAxisAlignment.end
+                                    : CrossAxisAlignment.start,
                                 children: [
                                   if (!isMine)
                                     Padding(
-                                      padding: const EdgeInsets.only(bottom: 4.0),
+                                      padding:
+                                          const EdgeInsets.only(bottom: 4.0),
                                       child: Text(
                                         senderName,
                                         style: const TextStyle(
@@ -129,19 +110,24 @@ class _ChatScreenState extends State<ChatScreen> {
                                       ),
                                     ),
                                   Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 8),
                                     margin: const EdgeInsets.symmetric(
                                       vertical: 4,
                                       // horizontal: 8,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: isMine ? Colors.red.shade500 : Colors.grey.shade300,
+                                      color: isMine
+                                          ? Colors.red.shade500
+                                          : Colors.grey.shade300,
                                       borderRadius: BorderRadius.circular(16),
                                     ),
                                     child: Text(
                                       message['text'],
                                       style: TextStyle(
-                                        color: isMine ? Colors.white : Colors.black, //서버로 확인
+                                        color: isMine
+                                            ? Colors.white
+                                            : Colors.black, //서버로 확인
                                         fontSize: 15,
                                       ),
                                     ),
@@ -155,22 +141,41 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     child: Row(
                       children: [
                         Expanded(
                           child: TextField(
-                            cursorColor: Colors.white, //커서 색상 추가
-                            controller: viewModel.messageController,
+                            cursorColor: Colors.white,
+                            controller: chatViewModel.messageController,
                             decoration: InputDecoration(
                               prefixIcon: IconButton(
-                                  onPressed: () => viewModel.showHearts(context),
+                                  onPressed: () =>
+                                      chatViewModel.showHearts(context),
                                   icon: const Icon(
                                     Icons.favorite,
                                     color: Colors.red,
                                   )),
                               suffixIcon: IconButton(
-                                onPressed: viewModel.sendMessage,
+                                onPressed: () {
+                                  final text = chatViewModel
+                                      .messageController.text
+                                      .trim();
+                                  if (text.isNotEmpty) {
+                                    final deviceId = chatViewModel.deviceId;
+                                    final nickname =
+                                        chatViewModel.getNickname ?? "default";
+
+                                    if (deviceId != null &&
+                                        deviceId.isNotEmpty &&
+                                        nickname.isNotEmpty) {
+                                      chatViewModel.sendMessage(
+                                          deviceId, nickname);
+                                      chatViewModel.messageController.clear();
+                                    }
+                                  }
+                                },
                                 icon: const Icon(Icons.send, color: Colors.red),
                               ),
                               hintText: "메시지를 입력하세요...",
@@ -190,7 +195,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 ],
               ),
               ValueListenableBuilder<List<Widget>>(
-                valueListenable: viewModel.heartsNotifier,
+                valueListenable: chatViewModel.heartsNotifier,
                 builder: (context, hearts, _) {
                   return Stack(children: hearts);
                 },
