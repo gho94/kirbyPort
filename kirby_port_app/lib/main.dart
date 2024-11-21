@@ -31,6 +31,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           useMaterial3: true,
           brightness: Brightness.light,
+          fontFamily: 'basicFont'
         ),
         darkTheme: ThemeData(
           useMaterial3: true,
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
           bottomNavigationBarTheme: const BottomNavigationBarThemeData(
               backgroundColor: Colors.black26, selectedItemColor: Colors.red),
           brightness: Brightness.dark,
+            fontFamily: 'basicFont'
         ),
         themeMode: ThemeMode.dark,
       ),
