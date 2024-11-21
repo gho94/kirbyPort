@@ -5,6 +5,7 @@ import 'package:kirby_port_app/view_model/topic_view_model.dart';
 import 'package:kirby_port_app/model/room_model.dart';
 import 'package:kirby_port_app/model/topic_model.dart';
 import 'package:provider/provider.dart';
+import 'package:kirby_port_app/utils/color_and_style.dart';
 
 class CreateRoomScreen extends StatefulWidget {
   const CreateRoomScreen({super.key});
@@ -27,7 +28,8 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
     Room room = Room(
       name: _textEditingController.text,
       startTime: DateFormat('yyyy-MM-dd HH:mm:ss').format(startDateTime),
-      endTime: DateFormat('yyyy-MM-dd HH:mm:ss').format(startDateTime.add(const Duration(hours: 1))),
+      endTime: DateFormat('yyyy-MM-dd HH:mm:ss')
+          .format(startDateTime.add(const Duration(hours: 1))),
       topicId: _selectedTopic?.id ?? 1,
       playerId: 1,
       createdAt: DateFormat('yyyy-MM-dd HH:mm:ss').format(createdAtLocalDT),
@@ -42,7 +44,9 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
 
   void validActionEnable() {
     setState(() {
-      _isActionEnabled = _textEditingController.text.isNotEmpty && _selectedTopic != null && _selectedDateTime != null;
+      _isActionEnabled = _textEditingController.text.isNotEmpty &&
+          _selectedTopic != null &&
+          _selectedDateTime != null;
     });
   }
 
@@ -55,85 +59,48 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
             Navigator.pop(context);
           },
           icon: const Icon(Icons.arrow_back_ios_new_outlined),
-          color: Colors.red[900],
+          color: myRed900,
         ),
         title: const Text('채팅방 생성'),
         actions: [
           IconButton(
             onPressed: _isActionEnabled ? _addRoom : null,
             icon: const Icon(Icons.check),
-            color: Colors.red,
+            color: myRed900,
           )
         ],
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 70, horizontal: 25),
+          padding: const EdgeInsets.all(30.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                "방 이름",
-              ),
-              const SizedBox(height: 18),
+              const Text("방 이름", style: titleTextStyle),
+              const SizedBox(height: 10),
               TextField(
                 controller: _textEditingController,
-                decoration: InputDecoration(
-                    labelText: ' 채팅방 이름을 지정',
-                    labelStyle: TextStyle(color: Colors.red.withOpacity(0.6)),
-                    border: const OutlineInputBorder(
-                      borderSide: BorderSide(), //기본설정
-                    ),
-                    enabledBorder: const OutlineInputBorder(
-                      //포커스가 없는 상태의 테두리
-                      borderSide: BorderSide(
-                        color: Color.fromARGB(255, 214, 0, 0),
-                        width: 2,
-                      ),
-                    ),
-                    focusedBorder: const OutlineInputBorder(
-                      //포커스된 상태의 테두리
-                      borderSide: BorderSide(
-                        color: Color.fromARGB(255, 214, 0, 0),
-                        width: 2,
-                      ),
-                    ),
-                    filled: true,
-                    fillColor: Colors.grey[900]),
+                decoration: myInputDecoration(),
                 onChanged: (value) => validActionEnable(),
                 cursorColor: Colors.white,
               ),
               const SizedBox(height: 30),
-              const Text("주제 선택", style: TextStyle()),
-              const SizedBox(height: 5),
-              ElevatedButton(
+              const Text("주제", style: titleTextStyle),
+              const SizedBox(height: 10),
+              myElevatedButton(
                 onPressed: () => _showTopicSelectionDialog(context),
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 36),
-                  backgroundColor: Colors.red[900],
-                ),
-                child: Text(
-                  _selectedTopic?.name ?? "선택하기",
-                  style: const TextStyle(
-                    color: Colors.white, //보라색 됨
-                  ),
-                ),
+                text: _selectedTopic?.name ?? "선택하기",
               ),
               const SizedBox(height: 30),
-              const Text("날짜 및 시간 선택"),
+              const Text("날짜 및 시간", style: titleTextStyle),
               const SizedBox(height: 10),
-              ElevatedButton(
+              myElevatedButton(
                 onPressed: _selectDateTime,
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50),
-                  backgroundColor: Colors.red[900],
-                ),
-                child: Text(
-                  _selectedDateTime != null ? getFormattedDateTime(_selectedDateTime!) : "날짜 및 시간 선택하기",
-                  style: const TextStyle(color: Colors.white), //보라색 됨
-                ),
+                text: _selectedDateTime != null
+                    ? getFormattedDateTime(_selectedDateTime!)
+                    : "선택하기",
               ),
-              const SizedBox(height: 50),
+              const SizedBox(height: 60),
               _buildPreviewCard(),
             ],
           ),
@@ -152,7 +119,8 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
             Wrap(
               spacing: 10.0,
               runSpacing: 10.0,
-              children: Provider.of<TopicViewModel>(context).topics.map((topic) {
+              children:
+                  Provider.of<TopicViewModel>(context).topics.map((topic) {
                 return SizedBox(
                   width: 46.0,
                   height: 46.0,
@@ -217,57 +185,68 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
   }
 
   Widget _buildPreviewCard() {
-    return Card(
-      color: Colors.black,
-      elevation: 4.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '채팅방 생성 미리보기',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.red[900],
+    return SizedBox(
+      width: double.infinity,
+      child: Card(
+        color: Colors.black,
+        elevation: 10.0,
+        margin: EdgeInsets.zero, // 여백 제거
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(23),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(25.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                '채팅방 생성 미리보기',
+                style: TextStyle(
+                  fontSize: 17,
+                  decoration: TextDecoration.underline,
+                  decorationColor: myRed900,
+                  fontWeight: FontWeight.w900,
+                  color: myRed900,
+                ),
               ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              _textEditingController.text,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+              const SizedBox(height: 10),
+              Text(
+                _textEditingController.text.isNotEmpty == true
+                    ? _textEditingController.text
+                    : "방 이름을 입력해주세요",
+                style: const TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.w900,
+                ),
               ),
-            ),
-            const SizedBox(height: 10),
-            _buildPreviewRow(_selectedTopic?.name ?? "선택되지 않음"),
-            const SizedBox(height: 10),
-            _buildPreviewRow(_selectedDateTime != null ? getFormattedDateTime(_selectedDateTime!) : "선택되지 않음"),
-            const SizedBox(height: 10),
-            _buildPreviewRow("~ ${_getEndTimeFormatted() ?? "선택되지 않음"}")
-          ],
+              const SizedBox(height: 10),
+              buildPreviewText(
+                  _selectedTopic?.name != null
+                      ? "#${_selectedTopic!.name}"
+                      : "#주제를 선택해주세요",
+                  fontSize: 20),
+              const SizedBox(height: 10),
+              buildPreviewText(_selectedDateTime != null
+                  ? "Start ${getFormattedDateTime(_selectedDateTime!)}"
+                  : "Start 일시를 선택해주세요"),
+              const SizedBox(height: 5),
+              buildPreviewText("End ${_getEndTimeFormatted() ?? "일시를 선택해주세요"}"),
+              const SizedBox(height: 10),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildPreviewRow(String value) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
+  //buildPreviewText("커스텀 텍스트", fontSize: 14); //폰트사이즈는 선택
+  Text buildPreviewText(String value, {double fontSize = 14}) {
+    return Text(
+      value,
+      style: TextStyle(
+        fontSize: fontSize,
+        fontWeight: FontWeight.w500,
+      ),
     );
   }
 
