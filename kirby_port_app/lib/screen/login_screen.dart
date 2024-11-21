@@ -94,6 +94,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         height: 40,
                         child: myElevatedButton(
                           onPressed: () {
+                            final chatViewModel = Provider.of<ChatViewModel>(
+                                context,
+                                listen: false);
+                            String nickname = _nicknameController.text;
+                            chatViewModel.initializeUsers(nickname);
                             context.go('/home');
                           },
                           text: 'Login',
