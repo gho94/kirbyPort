@@ -5,13 +5,15 @@ import 'package:kirby_port_app/service/socket_service.dart';
 import '../service/device_info_manager.dart';
 
 class ChatViewModel with ChangeNotifier {
+  final String serverUrl;
   final SocketService socketService = SocketService();
   final TextEditingController messageController = TextEditingController();
   final ScrollController scrollController = ScrollController();
-  final ValueNotifier<List<Map<String, dynamic>>> messagesNotifier =
-      ValueNotifier<List<Map<String, dynamic>>>([]);
-  final ValueNotifier<List<Widget>> heartsNotifier = ValueNotifier([]);
+
   final DeviceInfoManager deviceInfoManager = DeviceInfoManager();
+
+  List<Map<String, dynamic>> messages = [];
+  List<Widget> hearts = [];
 
   String? nickname;
   String? deviceId;
@@ -19,16 +21,30 @@ class ChatViewModel with ChangeNotifier {
   String? get getDeviceId => deviceId;
   bool _isInitialized = false;
 
-  void setUsers(String nickname) {
-    this.nickname = nickname;
-    notifyListeners();
+  ChatViewModel({required this.serverUrl}) {
+    initialize(serverUrl);
   }
+
+  // void setUsers(String nickname) {
+  //   this.nickname = nickname;
+  //   notifyListeners();
+  // }
+
+  // void registerUser() {
+  //   if (nickname != null) {
+  //     socketService.socket.emit('register', nickname);
+  //     notifyListeners(); // 상태 변경 알림
+  //   }
+  // }
 
   Future<void> initializeUsers(String nickname) async {
     if (!_isInitialized) {
       deviceId = await deviceInfoManager.getDeviceId();
       this.nickname = nickname;
       _isInitialized = true;
+
+      socketService.socket.emit('register', nickname);
+
       notifyListeners();
     }
   }
@@ -40,14 +56,12 @@ class ChatViewModel with ChangeNotifier {
         nickname,
         (data) {
           final isMine = data['senderId'] == socketService.socket.id;
-          messagesNotifier.value = [
-            ...messagesNotifier.value,
-            {
-              'text': data['message'],
-              'isMine': isMine,
-              'senderName': data['senderName'],
-            }
-          ];
+          messages.add({
+            'text': data['message'],
+            'isMine': isMine,
+            'senderName': data['senderName'],
+          });
+          notifyListeners();
           scrollToBottom();
         },
       );
@@ -66,7 +80,7 @@ class ChatViewModel with ChangeNotifier {
     final random = Random();
 
     // 하트 생성
-    final List<Widget> hearts = List.generate(10, (_) {
+    hearts = List.generate(10, (_) {
       final double startX =
           random.nextDouble() * MediaQuery.of(context).size.width;
       final double endY = MediaQuery.of(context).size.height;
@@ -82,31 +96,33 @@ class ChatViewModel with ChangeNotifier {
       );
     });
 
-    // heartsNotifier에 추가
-    heartsNotifier.value = [...heartsNotifier.value, ...hearts];
+    notifyListeners(); // 상태 변경 알림
 
     // 일정 시간 후 하트 제거
     Future.delayed(const Duration(seconds: 2), () {
-      heartsNotifier.value = [];
+      hearts = [];
+      notifyListeners(); // 상태 변경 알림
     });
   }
 
   void scrollToBottom() {
-    Future.delayed(
-      const Duration(milliseconds: 100),
-      () => scrollController.animateTo(
-        scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      ),
-    );
+    if (scrollController.hasClients) {
+      Future.delayed(
+        const Duration(milliseconds: 100),
+        () => scrollController.animateTo(
+          scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        ),
+      );
+    }
   }
 
   @override
   void dispose() {
-    super.dispose();
     socketService.dispose();
     messageController.dispose();
     scrollController.dispose();
+    super.dispose();
   }
 }
