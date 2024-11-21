@@ -21,8 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               //제목, IDPW, 버튼
               Padding(
-                padding: EdgeInsets.symmetric(
-                    horizontal: MediaQuery.of(context).size.width * 0.25),
+                padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.25),
                 child: Form(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -46,17 +45,11 @@ class _LoginScreenState extends State<LoginScreen> {
                             children: [
                               Text(
                                 'KirBy',
-                                style: TextStyle(
-                                    fontSize: 31,
-                                    fontWeight: FontWeight.w900,
-                                    color: Colors.red[900]),
+                                style: TextStyle(fontSize: 31, fontWeight: FontWeight.w900, color: Colors.red[900]),
                               ),
                               Text(
                                 'Port',
-                                style: TextStyle(
-                                    fontSize: 31,
-                                    fontWeight: FontWeight.w900,
-                                    color: Colors.red[900]),
+                                style: TextStyle(fontSize: 31, fontWeight: FontWeight.w900, color: Colors.red[900]),
                               ),
                             ],
                           ),
@@ -74,25 +67,26 @@ class _LoginScreenState extends State<LoginScreen> {
                             }
                             return null;
                           },
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
+                          decoration: InputDecoration(
+                            border: const OutlineInputBorder(),
                             labelText: "E-mail",
-                            enabledBorder: OutlineInputBorder(
+                            labelStyle: TextStyle(color: Colors.red.withOpacity(0.6)),
+                            enabledBorder: const OutlineInputBorder(
                               borderSide: BorderSide(
                                 color: Color.fromARGB(255, 158, 158, 158),
                                 width: 1.5,
                               ),
                             ),
-                            focusedBorder: OutlineInputBorder(
+                            focusedBorder: const OutlineInputBorder(
                               borderSide: BorderSide(
                                 color: Colors.red,
                                 width: 1.5,
                               ),
                             ),
                             filled: true,
-                            fillColor: Colors.white,
                           ),
                           keyboardType: TextInputType.emailAddress,
+                          cursorColor: Colors.white, //커서 색상
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -106,25 +100,26 @@ class _LoginScreenState extends State<LoginScreen> {
 
                             return null;
                           },
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
+                          decoration: InputDecoration(
+                            border: const OutlineInputBorder(),
                             labelText: "Password",
-                            enabledBorder: OutlineInputBorder(
+                            labelStyle: TextStyle(color: Colors.red.withOpacity(0.6)),
+                            enabledBorder: const OutlineInputBorder(
                               borderSide: BorderSide(
                                 color: Color.fromARGB(255, 158, 158, 158),
                                 width: 1.5,
                               ),
                             ),
-                            focusedBorder: OutlineInputBorder(
+                            focusedBorder: const OutlineInputBorder(
                               borderSide: BorderSide(
                                 color: Colors.red,
                                 width: 1.5,
                               ),
                             ),
                             filled: true,
-                            fillColor: Colors.white,
                           ),
                           obscureText: true,
+                          cursorColor: Colors.white, //커서 색상
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -137,11 +132,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           onPressed: () {
                             context.go('/home');
                           },
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xfff44336)),
-                          child: const Text('Login',
-                              style: TextStyle(
-                                  color: Color(0xFFFfffff), fontSize: 20)),
+                          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xfff44336)),
+                          child: const Text('Login', style: TextStyle(color: Color(0xFFFfffff), fontSize: 20)),
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -153,8 +145,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             },
                             child: Text(
                               'Join Us',
-                              style: TextStyle(
-                                  color: Colors.red[900], fontSize: 16),
+                              style: TextStyle(color: Colors.red[900], fontSize: 16),
                             )),
                       ),
                       const SizedBox(height: 30),
@@ -185,8 +176,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   //채팅방 목록
                   Container(
-                    margin: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 10.0),
+                    margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10.0),
                     decoration: BoxDecoration(
                       color: Colors.black,
                       border: Border.all(width: 0.5, color: Colors.red),
@@ -209,48 +199,40 @@ class _LoginScreenState extends State<LoginScreen> {
                             children: [
                               Text(
                                 '#액션, #스릴러',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 13),
+                                style: TextStyle(fontSize: 13),
                               ),
                               Text(
                                 '오징어게임 2',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 20),
+                                style: TextStyle(fontSize: 20),
                               ),
                               SizedBox(height: 5),
                               Text(
                                 "Start: 2024-12-01 20:30",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 12),
+                                style: TextStyle(fontSize: 12),
                               ),
                               Text(
                                 "Start: 2024-12-01 23:00",
-                                style:
-                                    TextStyle(color: Colors.white, fontSize: 1),
+                                style: TextStyle(fontSize: 12),
                               ),
                             ],
                           ),
                           Row(
                             children: [
                               ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red[700],
-                                    minimumSize: const Size(20, 40)),
+                                style: ElevatedButton.styleFrom(backgroundColor: Colors.red[700], minimumSize: const Size(20, 40)),
                                 onPressed: () => context.push('/'),
                                 child: const Text(
                                   "참여",
-                                  style: TextStyle(color: Colors.white),
+                                  style: TextStyle(color: Colors.white), //보라색 됨
                                 ),
                               ),
                               const SizedBox(width: 10),
                               ElevatedButton(
                                 onPressed: () => context.push('/'),
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.grey,
-                                    minimumSize: const Size(20, 40)),
+                                style: ElevatedButton.styleFrom(backgroundColor: Colors.grey, minimumSize: const Size(20, 40)),
                                 child: const Text(
                                   "취소",
-                                  style: TextStyle(color: Colors.white),
+                                  style: TextStyle(color: Colors.white), //보라색 됨
                                 ),
                               ),
                             ],
@@ -260,8 +242,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   Container(
-                    margin: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 10.0),
+                    margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10.0),
                     decoration: BoxDecoration(
                       color: Colors.black,
                       // border: Border.all(width: 0.5, color: Colors.red),
@@ -284,48 +265,40 @@ class _LoginScreenState extends State<LoginScreen> {
                             children: [
                               Text(
                                 '#액션, #스릴러',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 13),
+                                style: TextStyle(fontSize: 13),
                               ),
                               Text(
                                 '오징어게임 1',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 20),
+                                style: TextStyle(fontSize: 20),
                               ),
                               SizedBox(height: 5),
                               Text(
                                 "Start: 2024-12-01 20:30",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 12),
+                                style: TextStyle(fontSize: 12),
                               ),
                               Text(
                                 "Start: 2024-12-01 23:00",
-                                style:
-                                    TextStyle(color: Colors.white, fontSize: 1),
+                                style: TextStyle(fontSize: 12),
                               ),
                             ],
                           ),
                           Row(
                             children: [
                               ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red[700],
-                                    minimumSize: const Size(20, 40)),
+                                style: ElevatedButton.styleFrom(backgroundColor: Colors.red[700], minimumSize: const Size(20, 40)),
                                 onPressed: () => context.push('/'),
                                 child: const Text(
                                   "참여",
-                                  style: TextStyle(color: Colors.white),
+                                  style: TextStyle(color: Colors.white), //보라색 됨
                                 ),
                               ),
                               const SizedBox(width: 10),
                               ElevatedButton(
                                 onPressed: () => context.push('/'),
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.grey,
-                                    minimumSize: const Size(20, 40)),
+                                style: ElevatedButton.styleFrom(backgroundColor: Colors.grey, minimumSize: const Size(20, 40)),
                                 child: const Text(
                                   "취소",
-                                  style: TextStyle(color: Colors.white),
+                                  style: TextStyle(color: Colors.white), //보라색 됨
                                 ),
                               ),
                             ],

@@ -57,12 +57,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
           icon: const Icon(Icons.arrow_back_ios_new_outlined),
           color: Colors.red[900],
         ),
-        title: const Text(
-          '채팅방 생성',
-          style: TextStyle(
-            color: Colors.white,
-          ),
-        ),
+        title: const Text('채팅방 생성'),
         actions: [
           IconButton(
             onPressed: _isActionEnabled ? _addRoom : null,
@@ -79,7 +74,6 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
             children: [
               const Text(
                 "방 이름",
-                style: TextStyle(color: Colors.white),
               ),
               const SizedBox(height: 18),
               TextField(
@@ -109,11 +103,8 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
                 onChanged: (value) => validActionEnable(),
                 cursorColor: Colors.white,
               ),
-              const SizedBox(height: 40),
-              const Text("주제 선택",
-                  style: TextStyle(
-                    color: Colors.white,
-                  )),
+              const SizedBox(height: 30),
+              const Text("주제 선택", style: TextStyle()),
               const SizedBox(height: 5),
               ElevatedButton(
                 onPressed: () => _showTopicSelectionDialog(context),
@@ -124,12 +115,12 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
                 child: Text(
                   _selectedTopic?.name ?? "선택하기",
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: Colors.white, //보라색 됨
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
-              const Text("날짜 및 시간 선택", style: TextStyle(color: Colors.white)),
+              const SizedBox(height: 30),
+              const Text("날짜 및 시간 선택"),
               const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: _selectDateTime,
@@ -139,10 +130,10 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
                 ),
                 child: Text(
                   _selectedDateTime != null ? getFormattedDateTime(_selectedDateTime!) : "날짜 및 시간 선택하기",
-                  style: const TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.white), //보라색 됨
                 ),
               ),
-              const SizedBox(height: 80),
+              const SizedBox(height: 50),
               _buildPreviewCard(),
             ],
           ),
@@ -242,7 +233,6 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
               ),
             ),
             const SizedBox(height: 10),
@@ -266,7 +256,6 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
           ),
         ),
       ],

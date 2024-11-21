@@ -24,7 +24,6 @@ class _JoinScreenState extends State<SignUpScreen> {
         height: 3.0,
       ),
       filled: true,
-      fillColor: Colors.white,
       border: const OutlineInputBorder(),
       focusedBorder: const OutlineInputBorder(
         borderSide: BorderSide(
@@ -42,6 +41,7 @@ class _JoinScreenState extends State<SignUpScreen> {
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           content: TextField(
+            cursorColor: Colors.black,
             controller: _emailController,
             decoration: buildInputDecoration('이메일', Colors.red),
             keyboardType: TextInputType.emailAddress,
@@ -54,6 +54,7 @@ class _JoinScreenState extends State<SignUpScreen> {
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           content: TextField(
+            cursorColor: Colors.black,
             controller: _passwordController,
             decoration: buildInputDecoration('비밀번호', Colors.red),
             obscureText: true,
@@ -66,6 +67,7 @@ class _JoinScreenState extends State<SignUpScreen> {
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           content: TextField(
+            cursorColor: Colors.black,
             controller: _nicknameController,
             decoration: buildInputDecoration('닉네임', Colors.red),
           ),
@@ -93,14 +95,12 @@ class _JoinScreenState extends State<SignUpScreen> {
     });
 
     try {
-      ScaffoldMessengerState scaffoldMessengerState =
-          ScaffoldMessenger.of(context);
+      ScaffoldMessengerState scaffoldMessengerState = ScaffoldMessenger.of(context);
       GoRouter goRouter = GoRouter.of(context);
 
       await Future.delayed(const Duration(seconds: 2));
 
-      scaffoldMessengerState
-          .showSnackBar(const SnackBar(content: Text('회원가입이 완료되었습니다.')));
+      scaffoldMessengerState.showSnackBar(const SnackBar(content: Text('회원가입이 완료되었습니다.')));
       goRouter.go('/login');
     } finally {
       setState(() {
@@ -126,8 +126,7 @@ class _JoinScreenState extends State<SignUpScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Theme(
-              data: ThemeData(
-                  colorScheme: const ColorScheme.light(primary: Colors.red)),
+              data: ThemeData(colorScheme: const ColorScheme.light(primary: Colors.red)),
               child: Center(
                 child: Stepper(
                   currentStep: _currentStep,
@@ -148,8 +147,7 @@ class _JoinScreenState extends State<SignUpScreen> {
                     }
                   },
                   steps: _steps(),
-                  controlsBuilder:
-                      (BuildContext context, ControlsDetails details) {
+                  controlsBuilder: (BuildContext context, ControlsDetails details) {
                     return Column(
                       children: [
                         const SizedBox(height: 10),
@@ -160,7 +158,7 @@ class _JoinScreenState extends State<SignUpScreen> {
                               onPressed: details.onStepContinue,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.red,
-                                foregroundColor: Colors.white,
+                                foregroundColor: Colors.black,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
@@ -171,7 +169,6 @@ class _JoinScreenState extends State<SignUpScreen> {
                             ElevatedButton(
                               onPressed: details.onStepCancel,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
                                 foregroundColor: Colors.black,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),

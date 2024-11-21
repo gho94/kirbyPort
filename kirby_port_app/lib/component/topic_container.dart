@@ -31,7 +31,7 @@ class _TopicContainerState extends State<TopicContainer> {
           horizontal: 16,
         ),
         decoration: BoxDecoration(
-          color: widget.isSelected ? Colors.red : Colors.white,
+          color: widget.isSelected ? Colors.red[900] : Colors.white.withOpacity(0.15),
           borderRadius: const BorderRadius.all(Radius.circular(20)),
         ),
         child: Center(
