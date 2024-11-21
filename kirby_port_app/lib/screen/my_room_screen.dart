@@ -37,8 +37,13 @@ class _MyRoomScreenState extends State<MyRoomScreen> with InfiniteScrollMixin {
     return Consumer2<RoomViewModel, TopicViewModel>(
       builder: (context, roomViewModel, topicViewModel, child) {
         final selectedTopicIds = topicViewModel.selectedTopicIds;
-        final myRooms = roomViewModel.rooms.where((room) => room.reserveYn == "Y").toList();
-        final filterRooms = myRooms.where((room) => selectedTopicIds.isEmpty || selectedTopicIds.contains(room.topicId)).toList();
+        final myRooms =
+            roomViewModel.rooms.where((room) => room.reserveYn == "Y").toList();
+        final filterRooms = myRooms
+            .where((room) =>
+                selectedTopicIds.isEmpty ||
+                selectedTopicIds.contains(room.topicId))
+            .toList();
 
         return Scaffold(
           body: Column(
@@ -46,16 +51,21 @@ class _MyRoomScreenState extends State<MyRoomScreen> with InfiniteScrollMixin {
               Expanded(
                 child: ListView.separated(
                   controller: scrollController,
-                  itemCount: filterRooms.length + (roomViewModel.loading ? 1 : 0),
-                  separatorBuilder: (context, index) => const SizedBox(height: 10),
+                  itemCount:
+                      filterRooms.length + (roomViewModel.loading ? 1 : 0),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 10),
                   itemBuilder: (BuildContext context, int index) {
                     if (roomViewModel.loading && index == filterRooms.length) {
                       return const Center(child: CircularProgressIndicator());
                     }
 
                     final room = filterRooms[index];
-                    final topic = topicViewModel.topics.where((topic) => topic.id == room.topicId).firstOrNull;
-                    return RoomItem(room: room, topicName: topic?.name ?? "Unknown");
+                    final topic = topicViewModel.topics
+                        .where((topic) => topic.id == room.topicId)
+                        .firstOrNull;
+                    return RoomItem(
+                        room: room, topicName: topic?.name ?? "Unknown");
                   },
                 ),
               )

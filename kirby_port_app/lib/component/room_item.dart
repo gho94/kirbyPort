@@ -109,9 +109,13 @@ class _RoomItemState extends State<RoomItem> {
                           _updateReserveYn(context, "Y");
                           LocalNotificationManager.showInstanceNotification(
                               widget.room.name, "예약 성공", widget.room.id!);
-                          DateTime startTime = DateTime.parse(widget.room.startTime);
+                          DateTime startTime =
+                              DateTime.parse(widget.room.startTime);
                           LocalNotificationManager.scheduleNotification(
-                              widget.room.name, "방이 오픈 되었커비 ", startTime, widget.room.id!);
+                              widget.room.name,
+                              "방이 오픈 되었커비 ",
+                              startTime,
+                              widget.room.id!);
                         },
                       )
                     else ...[
@@ -132,7 +136,8 @@ class _RoomItemState extends State<RoomItem> {
                             minimumSize: const Size(20, 40)),
                         onPressed: () {
                           _updateReserveYn(context, "N");
-                          LocalNotificationManager.cancelNotification(widget.room.id!);
+                          LocalNotificationManager.cancelNotification(
+                              widget.room.id!);
                           LocalNotificationManager.showInstanceNotification(
                               widget.room.name, "예약 취소", widget.room.id!);
                         },
