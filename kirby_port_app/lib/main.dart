@@ -35,7 +35,9 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => RoomViewModel()),
         ChangeNotifierProvider(create: (context) => TopicViewModel()),
-        ChangeNotifierProvider(create: (context) => ChatViewModel()),
+        ChangeNotifierProvider(
+            create: (context) =>
+                ChatViewModel(serverUrl: "http://192.168.35.15:3000")),
       ],
       child: MaterialApp.router(
         routerConfig: router,
