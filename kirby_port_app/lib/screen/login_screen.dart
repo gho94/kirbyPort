@@ -102,9 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               chatViewModel.initializeUsers(nickname);
                               context.go('/home');
                             } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('닉네임을 입력해주세요.')),
-                              );
+                              _showTopPopup(context);
                             }
                           },
                           text: 'Login',
@@ -161,7 +159,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             borderRadius: BorderRadius.circular(12),
                             boxShadow: [
                               BoxShadow(
-                                color: myRed900.withOpacity(0.5), // 그림자 색상 및 투명도
+                                color:
+                                    myRed900.withOpacity(0.5), // 그림자 색상 및 투명도
                                 blurRadius: 20, // 그림자 흐림 정도
                                 offset: const Offset(0, 0), // 그림자의 x, y 위치
                               ),
@@ -218,7 +217,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                           minimumSize: const Size(20, 40)),
                                       child: const Text(
                                         "취소",
-                                        style: TextStyle(color: Colors.white), //보라색 됨
+                                        style: TextStyle(
+                                            color: Colors.white), //보라색 됨
                                       ),
                                     ),
                                   ],
@@ -232,15 +232,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               vertical: 10, horizontal: 10.0),
                           decoration: BoxDecoration(
                             color: Colors.black,
-                            // border: Border.all(width: 0.5, color: Colors.red),
                             borderRadius: BorderRadius.circular(12),
-                            // boxShadow: [
-                            //   BoxShadow(
-                            //     color: Colors.red.withOpacity(0.5), // 그림자 색상 및 투명도
-                            //     blurRadius: 20, // 그림자 흐림 정도
-                            //     offset: const Offset(0, 0), // 그림자의 x, y 위치
-                            //   ),
-                            // ],
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(15.0),
@@ -268,8 +260,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                                     Text(
                                       "Start: 2024-12-01 23:00",
-                                      style:
-                                      TextStyle(color: Colors.white, fontSize: 1),
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 1),
                                     ),
                                   ],
                                 ),
@@ -293,7 +285,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                           minimumSize: const Size(20, 40)),
                                       child: const Text(
                                         "취소",
-                                        style: TextStyle(color: Colors.white), //보라색 됨
+                                        style: TextStyle(
+                                            color: Colors.white), //보라색 됨
                                       ),
                                     ),
                                   ],
@@ -343,5 +336,35 @@ class _LoginScreenState extends State<LoginScreen> {
         ],
       ),
     );
+  }
+
+  void _showTopPopup(BuildContext context) {
+    final overlay = Overlay.of(context);
+    final overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        top: 60,
+        left: 20,
+        right: 20,
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            padding:
+                const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(200, 195, 5, 5),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: const Text(
+              '닉네임을 입력해주세요.',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ),
+      ),
+    );
+    overlay.insert(overlayEntry);
+    Future.delayed(const Duration(seconds: 5), () {
+      overlayEntry.remove();
+    });
   }
 }
