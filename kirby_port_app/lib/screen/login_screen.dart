@@ -149,154 +149,160 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
 
                   //채팅방 목록
-                  Container(
-                    margin: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 10.0),
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      border: Border.all(width: 0.5, color: myRed900),
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: myRed900.withOpacity(0.5), // 그림자 색상 및 투명도
-                          blurRadius: 20, // 그림자 흐림 정도
-                          offset: const Offset(0, 0), // 그림자의 x, y 위치
+                  SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 10.0),
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            border: Border.all(width: 0.5, color: myRed900),
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: myRed900.withOpacity(0.5), // 그림자 색상 및 투명도
+                                blurRadius: 20, // 그림자 흐림 정도
+                                offset: const Offset(0, 0), // 그림자의 x, y 위치
+                              ),
+                            ],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '#액션, #스릴러',
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 13),
+                                    ),
+                                    Text(
+                                      '오징어게임 2',
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 20),
+                                    ),
+                                    SizedBox(height: 5),
+                                    Text(
+                                      "Start: 2024-12-01 20:30",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 12),
+                                    ),
+                                    Text(
+                                      "Start: 2024-12-01 23:00",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 12),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          backgroundColor: myRed700,
+                                          minimumSize: const Size(20, 40)),
+                                      onPressed: () => context.push('/'),
+                                      child: const Text(
+                                        "참여",
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    ElevatedButton(
+                                      onPressed: () => context.push('/'),
+                                      style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.grey,
+                                          minimumSize: const Size(20, 40)),
+                                      child: const Text(
+                                        "취소",
+                                        style: TextStyle(color: Colors.white), //보라색 됨
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 10.0),
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            // border: Border.all(width: 0.5, color: Colors.red),
+                            borderRadius: BorderRadius.circular(12),
+                            // boxShadow: [
+                            //   BoxShadow(
+                            //     color: Colors.red.withOpacity(0.5), // 그림자 색상 및 투명도
+                            //     blurRadius: 20, // 그림자 흐림 정도
+                            //     offset: const Offset(0, 0), // 그림자의 x, y 위치
+                            //   ),
+                            // ],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '#액션, #스릴러',
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 13),
+                                    ),
+                                    Text(
+                                      '오징어게임 1',
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 20),
+                                    ),
+                                    SizedBox(height: 5),
+                                    Text(
+                                      "Start: 2024-12-01 20:30",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 12),
+                                    ),
+                                    Text(
+                                      "Start: 2024-12-01 23:00",
+                                      style:
+                                      TextStyle(color: Colors.white, fontSize: 1),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          backgroundColor: myRed700,
+                                          minimumSize: const Size(20, 40)),
+                                      onPressed: () => context.push('/'),
+                                      child: const Text(
+                                        "참여",
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    ElevatedButton(
+                                      onPressed: () => context.push('/'),
+                                      style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.grey,
+                                          minimumSize: const Size(20, 40)),
+                                      child: const Text(
+                                        "취소",
+                                        style: TextStyle(color: Colors.white), //보라색 됨
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ],
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '#액션, #스릴러',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 13),
-                              ),
-                              Text(
-                                '오징어게임 2',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 20),
-                              ),
-                              SizedBox(height: 5),
-                              Text(
-                                "Start: 2024-12-01 20:30",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 12),
-                              ),
-                              Text(
-                                "Start: 2024-12-01 23:00",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 12),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: myRed700,
-                                    minimumSize: const Size(20, 40)),
-                                onPressed: () => context.push('/'),
-                                child: const Text(
-                                  "참여",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              ElevatedButton(
-                                onPressed: () => context.push('/'),
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.grey,
-                                    minimumSize: const Size(20, 40)),
-                                child: const Text(
-                                  "취소",
-                                  style: TextStyle(color: Colors.white), //보라색 됨
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 10.0),
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      // border: Border.all(width: 0.5, color: Colors.red),
-                      borderRadius: BorderRadius.circular(12),
-                      // boxShadow: [
-                      //   BoxShadow(
-                      //     color: Colors.red.withOpacity(0.5), // 그림자 색상 및 투명도
-                      //     blurRadius: 20, // 그림자 흐림 정도
-                      //     offset: const Offset(0, 0), // 그림자의 x, y 위치
-                      //   ),
-                      // ],
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '#액션, #스릴러',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 13),
-                              ),
-                              Text(
-                                '오징어게임 1',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 20),
-                              ),
-                              SizedBox(height: 5),
-                              Text(
-                                "Start: 2024-12-01 20:30",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 12),
-                              ),
-                              Text(
-                                "Start: 2024-12-01 23:00",
-                                style:
-                                    TextStyle(color: Colors.white, fontSize: 1),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: myRed700,
-                                    minimumSize: const Size(20, 40)),
-                                onPressed: () => context.push('/'),
-                                child: const Text(
-                                  "참여",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              ElevatedButton(
-                                onPressed: () => context.push('/'),
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.grey,
-                                    minimumSize: const Size(20, 40)),
-                                child: const Text(
-                                  "취소",
-                                  style: TextStyle(color: Colors.white), //보라색 됨
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
                     ),
                   ),
                 ],
