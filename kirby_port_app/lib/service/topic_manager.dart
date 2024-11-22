@@ -30,6 +30,13 @@ class TopicManager {
               created_at  TEXT, 
               updated_at  TEXT
             )""");
+
+        await db.insert("topic", {"name": "로맨스", "created_at": DateTime.now().toString()});
+        await db.insert("topic", {"name": "스릴러", "created_at": DateTime.now().toString()});
+        await db.insert("topic", {"name": "액션", "created_at": DateTime.now().toString()});
+        await db.insert("topic", {"name": "코믹", "created_at": DateTime.now().toString()});
+        await db.insert("topic", {"name": "호러", "created_at": DateTime.now().toString()});
+        await db.insert("topic", {"name": "애니메이션", "created_at": DateTime.now().toString()});
       },
       version: 1,
     );
@@ -45,6 +52,17 @@ class TopicManager {
       "topic",
       topic.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  // 새로운 delete 메서드 추가
+  Future<void> deleteTopic(int topicId) async {
+    final db = await database;
+
+    await db.delete(
+      "topic",
+      where: "id = ?",
+      whereArgs: [topicId],
     );
   }
 }

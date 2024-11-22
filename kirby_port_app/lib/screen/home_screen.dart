@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:kirby_port_app/widgets/page/my_room_page.dart';
-import 'package:kirby_port_app/widgets/page/room_list_page.dart';
+import 'package:kirby_port_app/screen/my_room_screen.dart';
+import 'package:kirby_port_app/screen/room_list_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -31,17 +31,35 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("방 목록"),
+        title: const Text("KriBy - Port"),
         centerTitle: true,
-        actions: [IconButton(icon: const Icon(Icons.filter_alt), onPressed: () => context.push("/topic-filter"))],
-      ),
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: _onPageChanged,
-        children: const [
-          RoomListPage(),
-          MyRoomPage(),
+        actions: [
+          IconButton(
+              icon: Icon(
+                Icons.filter_alt_outlined,
+                color: Colors.red[900],
+                size: 30,
+              ),
+              onPressed: () => context.push("/home/topic-filter")),
+          IconButton(
+              icon: Icon(
+                Icons.add,
+                color: Colors.red[900],
+                size: 30,
+              ),
+              onPressed: () => context.push("/home/create-room")),
         ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: PageView(
+          controller: _pageController,
+          onPageChanged: _onPageChanged,
+          children: const [
+            RoomListScreen(),
+            MyRoomScreen(),
+          ],
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,

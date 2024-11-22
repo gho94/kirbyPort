@@ -1,17 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:kirby_port_app/widgets/page/my_room_page.dart';
-import 'package:kirby_port_app/widgets/page/room_list_page.dart';
-import 'package:kirby_port_app/widgets/screen/create_room_screen.dart';
-import 'package:kirby_port_app/widgets/screen/home_screen.dart';
-import 'package:kirby_port_app/widgets/screen/topic_filter_screen.dart';
+import 'package:kirby_port_app/screen/chat_screen.dart';
+import 'package:kirby_port_app/screen/create_room_screen.dart';
+import 'package:kirby_port_app/screen/home_screen.dart';
+import 'package:kirby_port_app/screen/signup_screen.dart';
+import 'package:kirby_port_app/screen/login_screen.dart';
+import 'package:kirby_port_app/screen/my_room_screen.dart';
+import 'package:kirby_port_app/screen/room_list_screen.dart';
+import 'package:kirby_port_app/screen/topic_filter_screen.dart';
 
 GoRouter get router => _router;
 
 final GoRouter _router = GoRouter(
+  initialLocation: '/',
   routes: <RouteBase>[
     GoRoute(
       path: '/',
+      builder: (BuildContext context, GoRouterState state) {
+        return const LoginScreen();
+      },
+      routes: <RouteBase>[
+        GoRoute(
+          path: "signup",
+          builder: (BuildContext context, GoRouterState state) {
+            return const SignUpScreen();
+          },
+        ),
+      ],
+    ),
+    GoRoute(
+      path: '/home',
       builder: (BuildContext context, GoRouterState state) {
         return const HomeScreen();
       },
@@ -19,13 +37,13 @@ final GoRouter _router = GoRouter(
         GoRoute(
           path: "chat",
           builder: (BuildContext context, GoRouterState state) {
-            return const RoomListPage();
+            return const RoomListScreen();
           },
         ),
         GoRoute(
           path: "myRoom",
           builder: (BuildContext context, GoRouterState state) {
-            return const MyRoomPage();
+            return const MyRoomScreen();
           },
         ),
         GoRoute(
@@ -40,12 +58,13 @@ final GoRouter _router = GoRouter(
             return const CreateRoomScreen();
           },
         ),
-        // GoRoute(
-        //   path: "list",
-        //   builder: (BuildContext context, GoRouterState state) {
-        //     return const ChatScreen();
-        //   },
-        // ),
+        GoRoute(
+          path: "list",
+          builder: (BuildContext context, GoRouterState state) {
+            final roomName = state.extra as String? ?? "Unknown Room";
+            return ChatScreen(title: roomName);
+          },
+        ),
       ],
     ),
   ],
