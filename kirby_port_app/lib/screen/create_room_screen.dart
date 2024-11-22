@@ -100,6 +100,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
               const SizedBox(height: 10),
               TextField(
                 controller: _textEditingController,
+                maxLength: 10,
                 decoration: myInputDecoration(),
                 onChanged: (value) => validActionEnable(),
                 cursorColor: Colors.white,
@@ -246,30 +247,32 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
             ),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: topicViewModel.topics.map((topic) {
-                return Padding(
-                  padding: const EdgeInsets.only(right: 10),
-                  child: GestureDetector(
-                    onTap: () {
-                      topicViewModel.toggleTopicSelection(topic.id!);
-                      setState(() {
-                        _topicSelected =
-                            topicViewModel.selectedTopicIds.isNotEmpty;
-                      });
-                      validActionEnable();
-                    },
-                    child: TopicContainer(
-                      text: topic.name,
-                      isSelected:
-                          topicViewModel.selectedTopicIds.contains(topic.id!),
+          child: Scrollbar(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: topicViewModel.topics.map((topic) {
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: GestureDetector(
+                      onTap: () {
+                        topicViewModel.toggleTopicSelection(topic.id!);
+                        setState(() {
+                          _topicSelected =
+                              topicViewModel.selectedTopicIds.isNotEmpty;
+                        });
+                        validActionEnable();
+                      },
+                      child: TopicContainer(
+                        text: topic.name,
+                        isSelected:
+                            topicViewModel.selectedTopicIds.contains(topic.id!),
+                      ),
                     ),
-                  ),
-                );
-              }).toList(),
+                  );
+                }).toList(),
+              ),
             ),
           ),
         );
