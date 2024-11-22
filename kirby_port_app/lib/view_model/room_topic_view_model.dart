@@ -40,4 +40,9 @@ class RoomTopicViewModel extends ChangeNotifier {
     notifyListeners();
     //getTopicsByRoomId(roomTopic.roomId);
   }
+
+  Future<void> removeRoomTopic(int roomId) async {
+    await _roomTopicManager.removeRoomTopic(roomId);
+    getRoomTopics();
+  }
 }
