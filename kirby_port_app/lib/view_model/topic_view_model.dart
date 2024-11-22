@@ -41,6 +41,11 @@ class TopicViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void clearSelectedTopics() {
+    selectedTopicIds.clear();
+    notifyListeners();
+  }
+
   void deleteTopic(int topicId) async {
     final topicManager = TopicManager();
     await topicManager.deleteTopic(topicId);

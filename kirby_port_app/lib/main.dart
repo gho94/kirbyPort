@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kirby_port_app/route.dart';
 import 'package:kirby_port_app/service/local_notification_manager.dart';
 import 'package:kirby_port_app/view_model/chat_view_model.dart';
+import 'package:kirby_port_app/view_model/room_topic_view_model.dart';
 import 'package:kirby_port_app/view_model/room_view_model.dart';
 import 'package:kirby_port_app/view_model/topic_view_model.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -35,9 +36,8 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => RoomViewModel()),
         ChangeNotifierProvider(create: (context) => TopicViewModel()),
-        ChangeNotifierProvider(
-            create: (context) =>
-                ChatViewModel(serverUrl: "http://192.168.35.15:3000")),
+        ChangeNotifierProvider(create: (context) => RoomTopicViewModel()),
+        ChangeNotifierProvider(create: (context) => ChatViewModel(serverUrl: "http://192.168.35.15:3000")),
       ],
       child: MaterialApp.router(
         routerConfig: router,
@@ -50,8 +50,7 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
           appBarTheme: AppBarTheme(backgroundColor: Colors.grey[900]),
           scaffoldBackgroundColor: Colors.grey[900],
-          bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-              backgroundColor: Colors.black26, selectedItemColor: Colors.red),
+          bottomNavigationBarTheme: const BottomNavigationBarThemeData(backgroundColor: Colors.black26, selectedItemColor: Colors.red),
           brightness: Brightness.dark,
         ),
         themeMode: ThemeMode.dark,
