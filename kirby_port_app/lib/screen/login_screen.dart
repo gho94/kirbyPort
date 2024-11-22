@@ -77,7 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           controller: _nicknameController,
                           validator: (value) {
                             if (value!.isEmpty) {
-                              return '닉네임을 입력해주세요.';
+                              return '닉네임을 입력해주세요!';
                             }
                             return null;
                           },
