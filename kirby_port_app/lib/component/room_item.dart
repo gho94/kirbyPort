@@ -97,7 +97,12 @@ class RoomItem extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    "${DateFormat('yyyy-MM-dd HH:mm').format(DateTime.parse(room.startTime))} ~ ${DateFormat('yyyy-MM-dd HH:mm').format(DateTime.parse(room.endTime))}",
+                    DateFormat('yyyy-MM-dd HH:mm')
+                        .format(DateTime.parse(room.startTime)),
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                  Text(
+                    " ~ ${DateFormat('yyyy-MM-dd HH:mm').format(DateTime.parse(room.endTime))}",
                     style: const TextStyle(fontSize: 12),
                   )
                 ],
