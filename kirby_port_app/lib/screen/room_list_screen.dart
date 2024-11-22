@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:kirby_port_app/view_model/room_topic_view_model.dart';
 import 'package:kirby_port_app/view_model/room_view_model.dart';
 import 'package:kirby_port_app/view_model/topic_view_model.dart';
 import 'package:kirby_port_app/component/infinite_scroll_mixin.dart';
@@ -35,13 +35,17 @@ class _RoomListScreenState extends State<RoomListScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<RoomViewModel, TopicViewModel>(
-      builder: (context, roomViewModel, topicViewModel, child) {
+    return Consumer3<RoomViewModel, TopicViewModel, RoomTopicViewModel>(
+      builder:
+          (context, roomViewModel, topicViewModel, roomTopicViewModel, child) {
         final selectedTopicIds = topicViewModel.selectedTopicIds;
+        final roomIds = roomTopicViewModel.roomTopics
+            .where((roomTopic) => selectedTopicIds.contains(roomTopic.topicId))
+            .map((roomTopic) => roomTopic.roomId)
+            .toSet();
         final filterRooms = roomViewModel.rooms
             .where((room) =>
-                selectedTopicIds.isEmpty ||
-                selectedTopicIds.contains(room.topicId))
+                selectedTopicIds.isEmpty || roomIds.contains(room.id!))
             .toList();
 
         return Scaffold(
@@ -59,19 +63,26 @@ class _RoomListScreenState extends State<RoomListScreen>
                       return const Center(child: CircularProgressIndicator());
                     }
                     final room = filterRooms[index];
-                    final topic = topicViewModel.topics
-                        .where((topic) => topic.id == room.topicId)
-                        .firstOrNull;
+
+                    final List<int> topicIds = roomTopicViewModel.roomTopics
+                        .where((roomTopic) => roomTopic.roomId == room.id!)
+                        .map((roomTopic) => roomTopic.topicId)
+                        .toList();
+                    final List<String> topicNames = topicViewModel.topics
+                        .where((topic) => topicIds.contains(topic.id!))
+                        .toList()
+                        .map((topic) => topic.name)
+                        .toList();
+
                     return RoomItem(
-                        room: room, topicName: topic?.name ?? "Unknown");
+                      room: room,
+                      topicNames:
+                          topicNames.isNotEmpty ? topicNames : ["Unknown"],
+                    );
                   },
                 ),
               )
             ],
-          ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () => context.push("/home/create-room"),
-            child: const Icon(Icons.add),
           ),
         );
       },

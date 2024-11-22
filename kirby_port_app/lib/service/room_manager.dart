@@ -30,21 +30,15 @@ class RoomManager {
               id          INTEGER PRIMARY KEY,
               name        TEXT, 
               start_time  TEXT, 
-              end_time    TEXT, 
-              topic_id    INTEGER, 
-              
+              end_time    TEXT,               
               player_id   INTEGER, 
+              
               created_at  TEXT, 
               updated_at  TEXT,
               reserve_yn  TEXT
             )""");
       },
-      version: 2,
-      onUpgrade: (db, oldVersion, newVersion) async {
-        if (oldVersion < 2) {
-          await db.execute('ALTER TABLE room ADD COLUMN reserve_yn TEXT');
-        }
-      },
+      version: 1,
     );
   }
 
@@ -53,8 +47,10 @@ class RoomManager {
     return List.generate(maps.length, (index) => Room.fromMap(maps[index]));
   }
 
-  Future<void> addRoom(Room room) async {
-    await _database.insert(
+  Future<int> addRoom(Room room) async {
+    final db = await database;
+
+    return db.insert(
       "room",
       room.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,

@@ -30,9 +30,11 @@ class RoomViewModel extends ChangeNotifier {
     return _rooms;
   }
 
-  Future<void> addRoom(Room room) async {
-    await _roomManager.addRoom(room);
+  Future<int> addRoom(Room room) async {
+    int roomId = await _roomManager.addRoom(room);
     getRooms();
+
+    return roomId;
   }
 
   Future<void> updateReserveYn({required int roomId, required String reserveYn, required String updatedAt}) async {
