@@ -77,7 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           controller: _nicknameController,
                           validator: (value) {
                             if (value!.isEmpty) {
-                              return '닉네임을 입력해주세요.';
+                              return '닉네임을 입력해주세요~!';
                             }
                             return null;
                           },
@@ -94,12 +94,18 @@ class _LoginScreenState extends State<LoginScreen> {
                         height: 40,
                         child: myElevatedButton(
                           onPressed: () {
-                            final chatViewModel = Provider.of<ChatViewModel>(
-                                context,
-                                listen: false);
-                            String nickname = _nicknameController.text;
-                            chatViewModel.initializeUsers(nickname);
-                            context.go('/home');
+                            String nickname = _nicknameController.text.trim();
+                            if (nickname.isNotEmpty) {
+                              final chatViewModel = Provider.of<ChatViewModel>(
+                                  context,
+                                  listen: false);
+                              chatViewModel.initializeUsers(nickname);
+                              context.go('/home');
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('닉네임을 입력해주세요.')),
+                              );
+                            }
                           },
                           text: 'Login',
                         ),
