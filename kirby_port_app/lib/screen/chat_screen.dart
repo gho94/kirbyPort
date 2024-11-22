@@ -4,7 +4,9 @@ import 'package:kirby_port_app/view_model/chat_view_model.dart';
 import 'package:provider/provider.dart';
 
 class ChatScreen extends StatelessWidget {
-  const ChatScreen({super.key});
+  final String title;
+
+  const ChatScreen({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -14,9 +16,9 @@ class ChatScreen extends StatelessWidget {
       backgroundColor: Colors.grey.shade900,
       appBar: AppBar(
         backgroundColor: Colors.grey.shade900,
-        title: const Text(
-          "오징어게임 2 1화",
-          style: TextStyle(
+        title: Text(
+          title,
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 25,
           ),
@@ -46,7 +48,7 @@ class _LiveIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(right: 8.0),
+      padding: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.05),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
         decoration: BoxDecoration(
@@ -96,9 +98,7 @@ class _InputTextField extends StatelessWidget {
                       final deviceId = chatViewModel.deviceId;
                       final nickname = chatViewModel.getNickname ?? "default";
 
-                      if (deviceId != null &&
-                          deviceId.isNotEmpty &&
-                          nickname.isNotEmpty) {
+                      if (deviceId != null && deviceId.isNotEmpty && nickname.isNotEmpty) {
                         chatViewModel.sendMessage(deviceId, nickname);
                         chatViewModel.messageController.clear();
                       }
@@ -134,6 +134,7 @@ class _ChatHistory extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
+        width: MediaQuery.of(context).size.width * 0.9,
         decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
