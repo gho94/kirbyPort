@@ -103,13 +103,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               context.go('/home');
                             } else {
                               _showTopPopup(context);
-                              //     ScaffoldMessenger.of(context).showSnackBar(
-                              //       const SnackBar(
-                              //         content: Text('닉네임을 입력해주세요.'),
-                              //         behavior: SnackBarBehavior.floating,
-                              //         margin: EdgeInsets.only(top: kToolbarHeight),
-                              //       ),
-                              //     );
                             }
                           },
                           text: 'Login',
