@@ -61,7 +61,8 @@ final GoRouter _router = GoRouter(
         GoRoute(
           path: "list",
           builder: (BuildContext context, GoRouterState state) {
-            return const ChatScreen();
+            final roomName = state.extra as String? ?? "Unknown Room";
+            return ChatScreen(title: roomName);
           },
         ),
       ],
