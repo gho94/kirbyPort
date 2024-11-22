@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:kirby_port_app/model/room_model.dart';
+import 'package:kirby_port_app/view_model/room_topic_view_model.dart';
 import 'package:kirby_port_app/view_model/room_view_model.dart';
 import 'package:provider/provider.dart';
 import '../service/local_notification_manager.dart';
@@ -37,7 +38,7 @@ class RoomItem extends StatelessWidget {
             );
           },
         );
-        if (confirmed == true) {
+        if (confirmed == true && context.mounted) {
           _deleteRoom(context);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('${room.name} 삭제됨')),
@@ -81,7 +82,8 @@ class RoomItem extends StatelessWidget {
                           return Padding(
                             padding: const EdgeInsets.only(right: 10),
                             child: Center(
-                              child: Text("#$topicName", style: const TextStyle(fontSize: 12)),
+                              child: Text("#$topicName",
+                                  style: const TextStyle(fontSize: 12)),
                             ),
                           );
                         }).toList(),
@@ -105,18 +107,23 @@ class RoomItem extends StatelessWidget {
                   children: [
                     if (room.reserveYn == "N")
                       IconButton(
-                        icon: const Icon(Icons.notifications, color: Colors.grey),
+                        icon:
+                            const Icon(Icons.notifications, color: Colors.grey),
                         onPressed: () => _updateReserveYn(context, "Y"),
                       )
                     else ...[
-                      if (DateTime.now().isAfter(DateTime.parse(room.startTime)))
+                      if (DateTime.now()
+                          .isAfter(DateTime.parse(room.startTime)))
                         IconButton(
-                          icon: const Icon(Icons.door_front_door_outlined, color: Colors.red),
-                          onPressed: () => context.push('/home/list', extra: room.name),
+                          icon: const Icon(Icons.door_front_door_outlined,
+                              color: Colors.red),
+                          onPressed: () =>
+                              context.push('/home/list', extra: room.name),
                         )
                       else ...[
                         IconButton(
-                          icon: const Icon(Icons.notifications_active, color: Colors.red),
+                          icon: const Icon(Icons.notifications_active,
+                              color: Colors.red),
                           onPressed: () => _updateReserveYn(context, "N"),
                         )
                       ]
@@ -144,18 +151,29 @@ class RoomItem extends StatelessWidget {
 
   void _sendReservationNotification(String reserveYn) {
     if (reserveYn == "Y") {
-      LocalNotificationManager.showInstanceNotification(room.name, "예약 성공", room.id!);
+      LocalNotificationManager.showInstanceNotification(
+          room.name, "예약 성공", room.id!);
       DateTime startTime = DateTime.parse(room.startTime);
-      LocalNotificationManager.scheduleNotification(room.name, "방이 오픈 되었커비 ", startTime, room.id!);
+      LocalNotificationManager.scheduleNotification(
+          room.name, "방이 오픈 되었커비 ", startTime, room.id!);
     } else {
       LocalNotificationManager.cancelNotification(room.id!);
-      LocalNotificationManager.showInstanceNotification(room.name, "예약 취소", room.id!);
+      LocalNotificationManager.showInstanceNotification(
+          room.name, "예약 취소", room.id!);
     }
   }
 
   void _deleteRoom(BuildContext context) {
     final roomViewModel = Provider.of<RoomViewModel>(context, listen: false);
     roomViewModel.removeRoom(room.id!);
+
+    _deleteRoomTopic(context);
+  }
+
+  void _deleteRoomTopic(BuildContext context) {
+    final roomTopicViewModel =
+        Provider.of<RoomTopicViewModel>(context, listen: false);
+    roomTopicViewModel.removeRoomTopic(room.id!);
   }
 
   Widget _buildSwipeBackground(Color color) {

@@ -36,7 +36,8 @@ class RoomTopicManager {
 
   Future<List<RoomTopic>> getRoomTopics() async {
     final List<Map<String, dynamic>> maps = await _database.query("room_topic");
-    return List.generate(maps.length, (index) => RoomTopic.fromMap(maps[index]));
+    return List.generate(
+        maps.length, (index) => RoomTopic.fromMap(maps[index]));
   }
 
   Future<List<RoomTopic>> getTopicsByRoomId(int roomId) async {
@@ -46,7 +47,8 @@ class RoomTopicManager {
       whereArgs: [roomId],
     );
 
-    return List.generate(maps.length, (index) => RoomTopic.fromMap(maps[index]));
+    return List.generate(
+        maps.length, (index) => RoomTopic.fromMap(maps[index]));
   }
 
   Future<void> addRoomTopic(RoomTopic roomTopic) async {
@@ -57,11 +59,11 @@ class RoomTopicManager {
     );
   }
 
-  Future<void> deleteRoomTopic(int roomId, int topicId) async {
+  Future<void> removeRoomTopic(int roomId) async {
     await _database.delete(
       "room_topic",
-      where: "room_id = ? AND topic_id = ?",
-      whereArgs: [roomId, topicId],
+      where: "room_id = ?",
+      whereArgs: [roomId],
     );
   }
 }
