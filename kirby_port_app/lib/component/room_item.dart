@@ -17,9 +17,33 @@ class RoomItem extends StatelessWidget {
     return Dismissible(
       key: Key(room.id.toString()),
       direction: DismissDirection.horizontal,
-      onDismissed: (direction) {
-        _deleteRoom(context);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${room.name} 삭제됨')));
+      confirmDismiss: (direction) async {
+        final bool? confirmed = await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('삭제 확인'),
+              content: Text('${room.name}을(를) 삭제하시겠습니까?'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text('취소'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text('삭제'),
+                ),
+              ],
+            );
+          },
+        );
+        if (confirmed == true) {
+          _deleteRoom(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('${room.name} 삭제됨')),
+          );
+        }
+        return confirmed;
       },
       background: _buildSwipeBackground(Colors.red),
       secondaryBackground: _buildSwipeBackground(Colors.red),
