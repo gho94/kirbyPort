@@ -4,12 +4,11 @@ import 'package:sqflite/sqflite.dart';
 
 class RoomManager {
   static final RoomManager _instance = RoomManager._internal();
-
   factory RoomManager() => _instance;
-
   RoomManager._internal();
 
   late Database _database;
+  bool isDatabaseInitialized = false;
 
   Future<Database> get database async {
     if (_database.isOpen) return _database;
@@ -19,13 +18,14 @@ class RoomManager {
   }
 
   Future<void> initializeDatabase() async {
-    final databasePath = await getDatabasesPath();
-    final path = join(databasePath, "room_database.db");
+    if (!isDatabaseInitialized) {
+      final databasePath = await getDatabasesPath();
+      final path = join(databasePath, "room_database.db");
 
-    _database = await openDatabase(
-      path,
-      onCreate: (db, version) async {
-        await db.execute("""
+      _database = await openDatabase(
+        path,
+        onCreate: (db, version) async {
+          await db.execute("""
             CREATE TABLE room (
               id          INTEGER PRIMARY KEY,
               name        TEXT, 
@@ -37,13 +37,57 @@ class RoomManager {
               updated_at  TEXT,
               reserve_yn  TEXT
             )""");
-      },
-      version: 1,
-    );
+        },
+        version: 1,
+      );
+      isDatabaseInitialized = true;
+    }
   }
 
   Future<List<Room>> getRooms() async {
+    if (!isDatabaseInitialized) {
+      await initializeDatabase();
+    }
     final List<Map<String, dynamic>> maps = await _database.query("room");
+    return List.generate(maps.length, (index) => Room.fromMap(maps[index]));
+  }
+
+  Future<List<Room>> getMyRooms() async {
+    if (!isDatabaseInitialized) {
+      await initializeDatabase();
+    }
+    final List<Map<String, dynamic>> maps = await _database.query(
+      "room",
+      where: "reserve_yn = ?",
+      whereArgs: ['Y'],
+    );
+
+    return List.generate(maps.length, (index) => Room.fromMap(maps[index]));
+  }
+
+  Future<List<Room>> getFilteredRooms(List<int> selectedRoomIds) async {
+    if (!isDatabaseInitialized) {
+      await initializeDatabase();
+    }
+    final List<Map<String, dynamic>> maps = await _database.query(
+      "room",
+      where: "id IN (${List.filled(selectedRoomIds.length, '?').join(',')})",
+      whereArgs: selectedRoomIds,
+    );
+
+    return List.generate(maps.length, (index) => Room.fromMap(maps[index]));
+  }
+
+  Future<List<Room>> getFilteredMyRooms(List<int> selectedRoomIds) async {
+    if (!isDatabaseInitialized) {
+      await initializeDatabase();
+    }
+    final List<Map<String, dynamic>> maps = await _database.query(
+      "room",
+      where: "reserve_yn = ? AND id IN (${List.filled(selectedRoomIds.length, '?').join(',')})",
+      whereArgs: ['Y', ...selectedRoomIds],
+    );
+
     return List.generate(maps.length, (index) => Room.fromMap(maps[index]));
   }
 

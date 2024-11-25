@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:kirby_port_app/component/topic_container.dart';
 import 'package:kirby_port_app/model/topic_model.dart';
 import 'package:go_router/go_router.dart';
+import 'package:kirby_port_app/view_model/room_topic_view_model.dart';
+import 'package:kirby_port_app/view_model/room_view_model.dart';
 
 import 'package:kirby_port_app/view_model/topic_view_model.dart';
 import 'package:provider/provider.dart';
@@ -19,15 +21,31 @@ class TopicFilterScreen extends StatelessWidget {
             title: const Text("주제별 필터"),
             centerTitle: true,
             leading: IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
+              onPressed: () => Navigator.pop(context),
               icon: const Icon(Icons.arrow_back_ios_new_outlined),
               color: Colors.red[900],
             ),
             actions: [
               IconButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () {
+                  final selectedIndex = GoRouterState.of(context).extra as int;
+
+                  final roomViewModel = Provider.of<RoomViewModel>(context, listen: false);
+                  if (selectedIndex == 0) {
+                    if (topicViewModel.selectedTopicIds.isEmpty) {
+                      roomViewModel.getRooms();
+                    } else {
+                      roomViewModel.getFilteredRooms(topicViewModel.selectedTopicIds);
+                    }
+                  } else {
+                    if (topicViewModel.selectedTopicIds.isEmpty) {
+                      roomViewModel.getMyRooms();
+                    } else {
+                      roomViewModel.getFilteredMyRooms(topicViewModel.selectedTopicIds);
+                    }
+                  }
+                  Navigator.pop(context);
+                },
                 icon: const Icon(
                   Icons.check,
                   color: Colors.red,
@@ -47,6 +65,7 @@ class TopicFilterScreen extends StatelessWidget {
                   child: TopicContainer(
                     text: topic.name,
                     isSelected: topicViewModel.selectedTopicIds.contains(topic.id),
+                    badgeNumber: setNumber(context, topic.id!),
                   ),
                 );
               }).toList(),
@@ -106,6 +125,27 @@ class TopicFilterScreen extends StatelessWidget {
   }
 }
 
+int? setNumber(BuildContext context, int topicId) {
+  final selectedIndex = GoRouterState.of(context).extra as int;
+  final roomViewModel = Provider.of<RoomViewModel>(context, listen: false);
+
+  final roomTopicViewModel = Provider.of<RoomTopicViewModel>(context, listen: false);
+  final roomTopics = roomTopicViewModel.roomTopics;
+
+  if (selectedIndex == 0) {
+    if (List.from(roomTopics.where((roomTopic) => roomTopic.topicId == topicId).toList()).isNotEmpty) {
+      return List.from(roomTopics.where((roomTopic) => roomTopic.topicId == topicId).toList()).length;
+    }
+  } else {
+    if (List.from(roomTopics.where((roomTopic) => roomViewModel.rooms.any((room) => room.id == roomTopic.roomId && roomTopic.topicId == topicId)).toList())
+        .isNotEmpty) {
+      return roomTopics.where((roomTopic) => roomViewModel.rooms.any((room) => room.id == roomTopic.roomId && roomTopic.topicId == topicId)).toList().length;
+    }
+  }
+
+  return null;
+}
+
 void _showConfirmationDialog(BuildContext context, Topic topic, TopicViewModel topicViewModel) {
   showDialog(
     context: context,
@@ -137,7 +177,8 @@ void _showConfirmationDialog(BuildContext context, Topic topic, TopicViewModel t
                 duration: const Duration(seconds: 2),
               ),
             );
-            topicViewModel.deleteTopic(topic.id!);
+            _deleteTopic(context, topic, topicViewModel);
+            //topicViewModel.deleteTopic(topic.id!);
             context.pop();
           },
           child: const Text(
@@ -151,4 +192,15 @@ void _showConfirmationDialog(BuildContext context, Topic topic, TopicViewModel t
       ],
     ),
   );
+}
+
+void _deleteTopic(BuildContext context, Topic topic, TopicViewModel topicViewModel) {
+  topicViewModel.deleteTopic(topic.id!);
+
+  _deleteRoomTopic(context, topic);
+}
+
+void _deleteRoomTopic(BuildContext context, Topic topic) {
+  final roomTopicViewModel = Provider.of<RoomTopicViewModel>(context, listen: false);
+  roomTopicViewModel.removeRoomTopicByTopicId(topic.id!);
 }

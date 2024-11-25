@@ -1,9 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:kirby_port_app/model/room_model.dart';
 import 'package:kirby_port_app/service/room_manager.dart';
+import 'package:kirby_port_app/service/room_topic_manager.dart';
 
 class RoomViewModel extends ChangeNotifier {
   final RoomManager _roomManager = RoomManager();
+  final RoomTopicManager _roomTopicManager = RoomTopicManager();
+
   List<Room> _rooms = [];
   List<Room> get rooms => _rooms;
 
@@ -16,7 +19,7 @@ class RoomViewModel extends ChangeNotifier {
 
   Future<void> _initialize() async {
     await _roomManager.initializeDatabase();
-    await getRooms();
+    //await getRooms();
   }
 
   Future<List<Room>> getRooms() async {
@@ -28,6 +31,39 @@ class RoomViewModel extends ChangeNotifier {
     notifyListeners();
 
     return _rooms;
+  }
+
+  Future<List<Room>> getMyRooms() async {
+    _loading = true;
+    notifyListeners();
+
+    _rooms = await _roomManager.getMyRooms();
+    _loading = false;
+    notifyListeners();
+
+    return _rooms;
+  }
+
+  Future<void> getFilteredRooms(List<int> selectedTopicIds) async {
+    _loading = true;
+    notifyListeners();
+
+    final roomIds = await _roomTopicManager.getRoomTopicsByTopicIds(selectedTopicIds);
+    _rooms = await _roomManager.getFilteredRooms(roomIds);
+
+    _loading = false;
+    notifyListeners();
+  }
+
+  Future<void> getFilteredMyRooms(List<int> selectedTopicIds) async {
+    _loading = true;
+    notifyListeners();
+
+    final roomIds = await _roomTopicManager.getRoomTopicsByTopicIds(selectedTopicIds);
+    _rooms = await _roomManager.getFilteredMyRooms(roomIds);
+
+    _loading = false;
+    notifyListeners();
   }
 
   Future<int> addRoom(Room room) async {

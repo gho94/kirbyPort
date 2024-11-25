@@ -13,8 +13,9 @@ class RoomListScreen extends StatefulWidget {
   State<RoomListScreen> createState() => _RoomListScreenState();
 }
 
-class _RoomListScreenState extends State<RoomListScreen>
-    with InfiniteScrollMixin {
+class _RoomListScreenState extends State<RoomListScreen> with InfiniteScrollMixin {
+  Map<int, String> topicIdToName = {};
+
   @override
   void onScroll() {
     final roomViewModel = Provider.of<RoomViewModel>(context, listen: false);
@@ -25,6 +26,13 @@ class _RoomListScreenState extends State<RoomListScreen>
   void initState() {
     super.initState();
     initScrollListener();
+    Future.delayed(Duration.zero, () {
+      if (mounted) {
+        final roomViewModel = Provider.of<RoomViewModel>(context, listen: false);
+        final selectedTopicIds = Provider.of<TopicViewModel>(context, listen: false).selectedTopicIds;
+        selectedTopicIds.isEmpty ? roomViewModel.getRooms() : roomViewModel.getFilteredRooms(selectedTopicIds);
+      }
+    });
   }
 
   @override
@@ -36,17 +44,8 @@ class _RoomListScreenState extends State<RoomListScreen>
   @override
   Widget build(BuildContext context) {
     return Consumer3<RoomViewModel, TopicViewModel, RoomTopicViewModel>(
-      builder:
-          (context, roomViewModel, topicViewModel, roomTopicViewModel, child) {
-        final selectedTopicIds = topicViewModel.selectedTopicIds;
-        final roomIds = roomTopicViewModel.roomTopics
-            .where((roomTopic) => selectedTopicIds.contains(roomTopic.topicId))
-            .map((roomTopic) => roomTopic.roomId)
-            .toSet();
-        final filterRooms = roomViewModel.rooms
-            .where((room) =>
-                selectedTopicIds.isEmpty || roomIds.contains(room.id!))
-            .toList();
+      builder: (context, roomViewModel, topicViewModel, roomTopicViewModel, child) {
+        topicIdToName.addEntries(topicViewModel.topics.map((topic) => MapEntry(topic.id!, topic.name)));
 
         return Scaffold(
           body: Column(
@@ -54,30 +53,21 @@ class _RoomListScreenState extends State<RoomListScreen>
               Expanded(
                 child: ListView.separated(
                   controller: scrollController,
-                  itemCount:
-                      filterRooms.length + (roomViewModel.loading ? 1 : 0),
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(height: 10),
+                  itemCount: roomViewModel.rooms.length + (roomViewModel.loading ? 1 : 0),
+                  separatorBuilder: (context, index) => const SizedBox(height: 10),
                   itemBuilder: (BuildContext context, int index) {
-                    if (roomViewModel.loading && index == filterRooms.length) {
+                    if (roomViewModel.loading && index == roomViewModel.rooms.length) {
                       return const Center(child: CircularProgressIndicator());
                     }
-                    final room = filterRooms[index];
-
-                    final List<int> topicIds = roomTopicViewModel.roomTopics
+                    final room = roomViewModel.rooms[index];
+                    final List<String> topicNames = roomTopicViewModel.roomTopics
                         .where((roomTopic) => roomTopic.roomId == room.id!)
-                        .map((roomTopic) => roomTopic.topicId)
-                        .toList();
-                    final List<String> topicNames = topicViewModel.topics
-                        .where((topic) => topicIds.contains(topic.id!))
-                        .toList()
-                        .map((topic) => topic.name)
+                        .map((roomTopic) => topicIdToName[roomTopic.topicId] ?? "Unknown")
                         .toList();
 
                     return RoomItem(
                       room: room,
-                      topicNames:
-                          topicNames.isNotEmpty ? topicNames : ["Unknown"],
+                      topicNames: topicNames.isNotEmpty ? topicNames : ["Unknown"],
                     );
                   },
                 ),

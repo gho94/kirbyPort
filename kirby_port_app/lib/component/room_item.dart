@@ -93,7 +93,7 @@ class RoomItem extends StatelessWidget {
                   const SizedBox(height: 12),
                   Text(
                     room.name,
-                    style: const TextStyle(fontSize: 25),
+                    style: const TextStyle(fontSize: 20),
                   ),
                   const SizedBox(height: 12),
                   Text(
@@ -178,7 +178,7 @@ class RoomItem extends StatelessWidget {
   void _deleteRoomTopic(BuildContext context) {
     final roomTopicViewModel =
         Provider.of<RoomTopicViewModel>(context, listen: false);
-    roomTopicViewModel.removeRoomTopic(room.id!);
+    roomTopicViewModel.removeRoomTopicByRoomId(room.id!);
   }
 
   Widget _buildSwipeBackground(Color color) {

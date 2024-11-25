@@ -27,10 +27,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
 
   void validActionEnable() {
     setState(() {
-      _isActionEnabled = _textEditingController.text.isNotEmpty &&
-          _topicSelected &&
-          _startDate != null &&
-          _endDate != null;
+      _isActionEnabled = _textEditingController.text.isNotEmpty && _topicSelected && _startDate != null && _endDate != null;
     });
   }
 
@@ -44,24 +41,21 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
   }
 
   void _addRoomTopic(int roomId) {
-    final List<int> selectedTopicIds =
-        Provider.of<TopicViewModel>(context, listen: false).selectedTopicIds;
+    final List<int> selectedTopicIds = Provider.of<TopicViewModel>(context, listen: false).selectedTopicIds;
     for (int topicId in selectedTopicIds) {
       RoomTopic roomTopic = RoomTopic(
         roomId: roomId,
         topicId: topicId,
       );
 
-      final roomTopicViewModel =
-          Provider.of<RoomTopicViewModel>(context, listen: false);
+      final roomTopicViewModel = Provider.of<RoomTopicViewModel>(context, listen: false);
       roomTopicViewModel.addRoomTopic(roomTopic);
     }
 
     final topicViewModel = Provider.of<TopicViewModel>(context, listen: false);
     topicViewModel.clearSelectedTopics();
 
-    final roomTopicViewModel =
-        Provider.of<RoomTopicViewModel>(context, listen: false);
+    final roomTopicViewModel = Provider.of<RoomTopicViewModel>(context, listen: false);
     roomTopicViewModel.getRoomTopics();
 
     Navigator.pop(context);
@@ -73,8 +67,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
-            final topicViewModel =
-                Provider.of<TopicViewModel>(context, listen: false);
+            final topicViewModel = Provider.of<TopicViewModel>(context, listen: false);
             topicViewModel.clearSelectedTopics();
             Navigator.pop(context);
           },
@@ -100,7 +93,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
               const SizedBox(height: 10),
               TextField(
                 controller: _textEditingController,
-                maxLength: 10,
+                maxLength: 15,
                 decoration: myInputDecoration(),
                 onChanged: (value) => validActionEnable(),
                 cursorColor: Colors.white,
@@ -121,8 +114,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
                 onPressed: () async {
                   DateTime? selectedDateTime = await _selectDateTime(context);
                   if (selectedDateTime != null) {
-                    if (selectedDateTime.isBefore(DateTime.now()) &&
-                        context.mounted) {
+                    if (selectedDateTime.isBefore(DateTime.now()) && context.mounted) {
                       _showInvalidDateDialog(context, true);
                     } else {
                       setState(() {
@@ -133,9 +125,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
                     }
                   }
                 },
-                text: _startDate != null
-                    ? getFormattedDateTime(_startDate!)
-                    : "선택하기",
+                text: _startDate != null ? getFormattedDateTime(_startDate!) : "선택하기",
               ),
               const SizedBox(height: 30),
               const Text("종료 날짜", style: titleTextStyle),
@@ -144,9 +134,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
                 onPressed: () async {
                   DateTime? selectedDateTime = await _selectDateTime(context);
                   if (selectedDateTime != null) {
-                    if (_startDate != null &&
-                        selectedDateTime.isBefore(_startDate!) &&
-                        context.mounted) {
+                    if (_startDate != null && selectedDateTime.isBefore(_startDate!) && context.mounted) {
                       _showInvalidDateDialog(context, false);
                     } else {
                       setState(() {
@@ -156,8 +144,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
                     }
                   }
                 },
-                text:
-                    _endDate != null ? getFormattedDateTime(_endDate!) : "선택하기",
+                text: _endDate != null ? getFormattedDateTime(_endDate!) : "선택하기",
               ),
               const SizedBox(height: 60),
               const Padding(
@@ -183,8 +170,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
   }
 
   void _showInvalidDateDialog(BuildContext context, bool isStart) {
-    String content =
-        isStart ? "시작 날짜는 오늘보다 뒤이어야 합니다." : "종료 날짜는 시작 날짜보다 뒤이어야 합니다.";
+    String content = isStart ? "시작 날짜는 오늘보다 뒤이어야 합니다." : "종료 날짜는 시작 날짜보다 뒤이어야 합니다.";
     showDialog(
       context: context,
       builder: (context) {
@@ -192,9 +178,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
           title: const Text("유효하지 않은 날짜"),
           content: Text(content),
           actions: [
-            TextButton(
-                child: const Text("확인"),
-                onPressed: () => Navigator.pop(context)),
+            TextButton(child: const Text("확인"), onPressed: () => Navigator.pop(context)),
           ],
         );
       },
@@ -259,15 +243,13 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
                       onTap: () {
                         topicViewModel.toggleTopicSelection(topic.id!);
                         setState(() {
-                          _topicSelected =
-                              topicViewModel.selectedTopicIds.isNotEmpty;
+                          _topicSelected = topicViewModel.selectedTopicIds.isNotEmpty;
                         });
                         validActionEnable();
                       },
                       child: TopicContainer(
                         text: topic.name,
-                        isSelected:
-                            topicViewModel.selectedTopicIds.contains(topic.id!),
+                        isSelected: topicViewModel.selectedTopicIds.contains(topic.id!),
                       ),
                     ),
                   );
@@ -282,14 +264,9 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
 
   Room createRoom() {
     return Room(
-      name: _textEditingController.text.isEmpty
-          ? "방 이름"
-          : _textEditingController.text,
-      startTime: _startDate == null
-          ? DateTime.now().toString()
-          : _startDate.toString(),
-      endTime:
-          _endDate == null ? DateTime.now().toString() : _endDate.toString(),
+      name: _textEditingController.text.isEmpty ? "방 이름" : _textEditingController.text,
+      startTime: _startDate == null ? DateTime.now().toString() : _startDate.toString(),
+      endTime: _endDate == null ? DateTime.now().toString() : _endDate.toString(),
       playerId: 1,
       createdAt: DateTime.now().toString(),
       reserveYn: "N",
@@ -301,15 +278,10 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
 
     return Consumer<TopicViewModel>(
       builder: (context, topicViewModel, child) {
-        List<String> topicNames = topicViewModel.topics
-            .where(
-                (topic) => topicViewModel.selectedTopicIds.contains(topic.id!))
-            .map((topic) => topic.name)
-            .toList();
+        List<String> topicNames =
+            topicViewModel.topics.where((topic) => topicViewModel.selectedTopicIds.contains(topic.id!)).map((topic) => topic.name).toList();
 
-        return RoomItem(
-            room: room,
-            topicNames: topicNames.isNotEmpty ? topicNames : ["Unknown"]);
+        return RoomItem(room: room, topicNames: topicNames.isNotEmpty ? topicNames : ["Unknown"]);
       },
     );
   }

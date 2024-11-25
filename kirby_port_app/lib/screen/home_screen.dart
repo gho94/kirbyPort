@@ -35,19 +35,13 @@ class _HomeScreenState extends State<HomeScreen> {
         centerTitle: true,
         actions: [
           IconButton(
-              icon: Icon(
-                Icons.filter_alt_outlined,
-                color: Colors.red[900],
-                size: 30,
-              ),
-              onPressed: () => context.push("/home/topic-filter")),
+            icon: Icon(Icons.filter_alt_outlined, color: Colors.red[900], size: 30),
+            onPressed: () => context.push("/home/topic-filter", extra: _selectedIndex),
+          ),
           IconButton(
-              icon: Icon(
-                Icons.add,
-                color: Colors.red[900],
-                size: 30,
-              ),
-              onPressed: () => context.push("/home/create-room")),
+            icon: Icon(Icons.add, color: Colors.red[900], size: 30),
+            onPressed: () => context.push("/home/create-room"),
+          ),
         ],
       ),
       body: Padding(
