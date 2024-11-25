@@ -37,18 +37,17 @@ class _MyRoomScreenState extends State<MyRoomScreen> with InfiniteScrollMixin {
     return Consumer3<RoomViewModel, TopicViewModel, RoomTopicViewModel>(
       builder:
           (context, roomViewModel, topicViewModel, roomTopicViewModel, child) {
-        final selectedTopicIds = topicViewModel.selectedTopicIds;
-        // final myRooms = roomViewModel.rooms.where((room) => room.reserveYn == "Y").toList();
+        // final selectedTopicIds = topicViewModel.selectedTopicIds;
+        final myRooms = roomViewModel.rooms.where((room) => room.reserveYn == "Y").toList();
         // final filterRooms = myRooms.where((room) => selectedTopicIds.isEmpty || selectedTopicIds.contains(room.topicId)).toList();
-
-        final roomIds = roomTopicViewModel.roomTopics
-            .where((roomTopic) => selectedTopicIds.contains(roomTopic.topicId))
-            .map((roomTopic) => roomTopic.roomId)
-            .toSet();
-        final filterRooms = roomViewModel.rooms
-            .where((room) =>
-                selectedTopicIds.isEmpty || roomIds.contains(room.id!))
-            .toList();
+        // final roomIds = roomTopicViewModel.roomTopics
+        //     .where((roomTopic) => selectedTopicIds.contains(roomTopic.topicId))
+        //     .map((roomTopic) => roomTopic.roomId)
+        //     .toSet();
+        // final filterRooms = roomViewModel.rooms
+        //     .where((room) =>
+        //         selectedTopicIds.isEmpty || roomIds.contains(room.id!))
+        //     .toList();
 
         return Scaffold(
           body: Column(
@@ -57,15 +56,15 @@ class _MyRoomScreenState extends State<MyRoomScreen> with InfiniteScrollMixin {
                 child: ListView.separated(
                   controller: scrollController,
                   itemCount:
-                      filterRooms.length + (roomViewModel.loading ? 1 : 0),
+                  myRooms.length + (roomViewModel.loading ? 1 : 0),
                   separatorBuilder: (context, index) =>
                       const SizedBox(height: 10),
                   itemBuilder: (BuildContext context, int index) {
-                    if (roomViewModel.loading && index == filterRooms.length) {
+                    if (roomViewModel.loading && index == myRooms.length) {
                       return const Center(child: CircularProgressIndicator());
                     }
 
-                    final room = filterRooms[index];
+                    final room = myRooms[index];
 
                     final List<int> topicIds = roomTopicViewModel.roomTopics
                         .where((roomTopic) => roomTopic.roomId == room.id!)
